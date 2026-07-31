@@ -6,7 +6,7 @@ import { useEffect, useState, createContext, useContext } from 'react'
 
 type Theme = 'dark' | 'light'
 
-const ThemeCtx = createContext<{ theme: Theme; toggle: () => void }>({ theme: 'dark', toggle: () => {} })
+const ThemeCtx = createContext<{ theme: Theme; toggle: () => void }>({ theme: 'light', toggle: () => {} })
 
 function useTheme() {
   return useContext(ThemeCtx)
@@ -14,8 +14,8 @@ function useTheme() {
 
 function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === 'undefined') return 'dark'
-    return (localStorage.getItem('ui-theme') as Theme) || 'dark'
+    if (typeof window === 'undefined') return 'light'
+    return (localStorage.getItem('ui-theme') as Theme) || 'light'
   })
 
   useEffect(() => {
@@ -28,25 +28,25 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
   return <ThemeCtx.Provider value={{ theme, toggle }}>{children}</ThemeCtx.Provider>
 }
 
-/* Color helpers — pure white/black, no red */
-function c(theme: Theme) {
+function v(theme: Theme) {
   const d = theme === 'dark'
   return {
     bg:       d ? '#000000' : '#FFFFFF',
     text:     d ? '#FFFFFF' : '#000000',
-    muted:    d ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
-    faint:    d ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.3)',
-    ghost:    d ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.15)',
-    divider:  d ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)',
+    muted:    d ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.45)',
+    faint:    d ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.25)',
+    ghost:    d ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)',
+    divider:  d ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
     navBg:    d ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.9)',
+    forest:   d ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
   }
 }
 
-/* ───────────────────────── TOGGLE ───────────────────────── */
+/* ───────────────────────── TOGGLE (top-right) ───────────────────────── */
 
 function ThemeToggle() {
   const { theme, toggle } = useTheme()
-  const colors = c(theme)
+  const col = v(theme)
   const isDark = theme === 'dark'
 
   return (
@@ -54,19 +54,19 @@ function ThemeToggle() {
       onClick={toggle}
       className="fixed cursor-pointer flex items-center justify-center transition-all duration-300 hover:scale-110"
       style={{
-        bottom: '1.5rem',
-        right: '1.5rem',
-        width: '2.75rem',
-        height: '2.75rem',
+        top: '1.25rem',
+        right: '1.25rem',
+        width: '2.5rem',
+        height: '2.5rem',
         borderRadius: '50%',
-        border: `1.5px solid ${colors.muted}`,
-        background: colors.bg,
+        border: `1.5px solid ${col.muted}`,
+        background: col.bg,
         zIndex: 9999,
       }}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-        stroke={colors.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+        stroke={col.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         {isDark ? (
           <>
             <circle cx="12" cy="12" r="5" />
@@ -87,15 +87,93 @@ function ThemeToggle() {
   )
 }
 
+/* ───────────────────────── Nordic Forest SVG ───────────────────────── */
+
+function NordicForest({ color }: { color: string }) {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+      <svg className="absolute bottom-0 left-0 w-full" style={{ height: '70vh' }} viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" fill="none">
+        {/* Far back trees - smaller, fainter */}
+        <g stroke={color} strokeWidth="0.8" opacity="0.3">
+          <line x1="80" y1="900" x2="80" y2="620" /><polygon points="80,620 55,720 105,720" fill="none" stroke={color} strokeWidth="0.6" />
+          <line x1="200" y1="900" x2="200" y2="580" /><polygon points="200,580 170,690 230,690" fill="none" stroke={color} strokeWidth="0.6" />
+          <line x1="350" y1="900" x2="350" y2="600" /><polygon points="350,600 325,700 375,700" fill="none" stroke={color} strokeWidth="0.6" />
+          <line x1="520" y1="900" x2="520" y2="560" /><polygon points="520,560 490,670 550,670" fill="none" stroke={color} strokeWidth="0.6" />
+          <line x1="680" y1="900" x2="680" y2="590" /><polygon points="680,590 650,700 710,700" fill="none" stroke={color} strokeWidth="0.6" />
+          <line x1="850" y1="900" x2="850" y2="610" /><polygon points="850,610 820,710 880,710" fill="none" stroke={color} strokeWidth="0.6" />
+          <line x1="1000" y1="900" x2="1000" y2="570" /><polygon points="1000,570 970,680 1030,680" fill="none" stroke={color} strokeWidth="0.6" />
+          <line x1="1150" y1="900" x2="1150" y2="600" /><polygon points="1150,600 1120,710 1180,710" fill="none" stroke={color} strokeWidth="0.6" />
+          <line x1="1300" y1="900" x2="1300" y2="630" /><polygon points="1300,630 1275,730 1325,730" fill="none" stroke={color} strokeWidth="0.6" />
+          <line x1="1400" y1="900" x2="1400" y2="650" /><polygon points="1400,650 1378,740 1422,740" fill="none" stroke={color} strokeWidth="0.6" />
+        </g>
+        {/* Mid trees */}
+        <g stroke={color} strokeWidth="1" opacity="0.5">
+          <line x1="40" y1="900" x2="40" y2="500" />
+          <polygon points="40,500 5,630 75,630" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="40,560 15,650 65,650" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="150" y1="900" x2="150" y2="480" />
+          <polygon points="150,480 110,620 190,620" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="150,550 125,640 175,640" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="300" y1="900" x2="300" y2="460" />
+          <polygon points="300,460 260,600 340,600" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="300,530 275,620 325,620" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="470" y1="900" x2="470" y2="490" />
+          <polygon points="470,490 435,610 505,610" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="470,555 448,635 492,635" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="620" y1="900" x2="620" y2="470" />
+          <polygon points="620,470 585,600 655,600" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="620,540 598,625 642,625" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="780" y1="900" x2="780" y2="500" />
+          <polygon points="780,500 745,620 815,620" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="780,565 758,645 802,645" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="940" y1="900" x2="940" y2="450" />
+          <polygon points="940,450 900,590 980,590" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="940,520 918,610 962,610" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="1100" y1="900" x2="1100" y2="480" />
+          <polygon points="1100,480 1065,610 1135,610" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="1100,550 1078,635 1122,635" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="1250" y1="900" x2="1250" y2="470" />
+          <polygon points="1250,470 1215,600 1285,600" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="1250,540 1228,625 1272,625" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="1380" y1="900" x2="1380" y2="510" />
+          <polygon points="1380,510 1350,630 1410,630" fill="none" stroke={color} strokeWidth="0.8" />
+        </g>
+        {/* Front trees - tallest, boldest */}
+        <g stroke={color} strokeWidth="1.2" opacity="0.7">
+          <line x1="120" y1="900" x2="120" y2="380" />
+          <polygon points="120,380 75,530 165,530" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="120,460 90,560 150,560" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="120,530 100,600 140,600" fill="none" stroke={color} strokeWidth="1" />
+          <line x1="420" y1="900" x2="420" y2="360" />
+          <polygon points="420,360 375,510 465,510" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="420,440 392,540 448,540" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="420,510 400,580 440,580" fill="none" stroke={color} strokeWidth="1" />
+          <line x1="720" y1="900" x2="720" y2="370" />
+          <polygon points="720,370 675,520 765,520" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="720,450 692,550 748,550" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="720,520 700,590 740,590" fill="none" stroke={color} strokeWidth="1" />
+          <line x1="1050" y1="900" x2="1050" y2="350" />
+          <polygon points="1050,350 1000,500 1100,500" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="1050,430 1020,535 1080,535" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="1050,500 1030,580 1070,580" fill="none" stroke={color} strokeWidth="1" />
+          <line x1="1320" y1="900" x2="1320" y2="400" />
+          <polygon points="1320,400 1280,530 1360,530" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="1320,470 1295,555 1345,555" fill="none" stroke={color} strokeWidth="1" />
+        </g>
+      </svg>
+    </div>
+  )
+}
+
 /* ───────────────────────── GRAIN ───────────────────────── */
 
-function Grain({ opacity }: { opacity: number }) {
+function Grain() {
   return (
     <div
       className="fixed inset-0 pointer-events-none"
       style={{
         zIndex: 1,
-        opacity,
+        opacity: 0.018,
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         backgroundRepeat: 'repeat',
         backgroundSize: '256px 256px',
@@ -109,7 +187,12 @@ function Grain({ opacity }: { opacity: number }) {
 function ComingSoon() {
   const { theme } = useTheme()
   const [visible, setVisible] = useState(false)
-  const v = c(theme)
+  const s = v(theme)
+  const isDark = theme === 'dark'
+
+  const glow = isDark
+    ? '0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(255,255,255,0.08)'
+    : '0 0 40px rgba(0,0,0,0.12), 0 0 80px rgba(0,0,0,0.06)'
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 100)
@@ -118,30 +201,40 @@ function ComingSoon() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 relative transition-colors duration-500"
-      style={{ background: v.bg, color: v.text }}
+      style={{ background: s.bg, color: s.text }}
     >
-      <Grain opacity={0.02} />
+      <NordicForest color={s.forest} />
+      <Grain />
 
-      <div className={`flex flex-col items-center transition-all duration-[2000ms] ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-        <h1 className="tracking-[0.35em] uppercase text-center select-none"
-          style={{ fontSize: 'clamp(1.25rem, 3.5vw, 2.25rem)', fontWeight: 300, letterSpacing: '0.35em', lineHeight: 1.4 }}
+      <div className={`flex flex-col items-center transition-all duration-[2000ms] ease-out relative ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+        style={{ zIndex: 2 }}
+      >
+        <h1
+          className="tracking-[0.35em] uppercase text-center select-none"
+          style={{
+            fontSize: 'clamp(1.25rem, 3.5vw, 2.25rem)',
+            fontWeight: 300,
+            letterSpacing: '0.35em',
+            lineHeight: 1.4,
+            textShadow: glow,
+          }}
         >
           Upstream<br />Institute
         </h1>
 
-        <div className="w-12 my-8" style={{ height: '1px', background: v.divider }} />
+        <div className="w-12 my-8" style={{ height: '1px', background: s.divider }} />
 
         <p className="text-center max-w-xs"
-          style={{ color: v.muted, fontSize: 'clamp(0.7rem, 1.2vw, 0.8125rem)', fontWeight: 300, letterSpacing: '0.08em', lineHeight: 1.7 }}
+          style={{ color: s.muted, fontSize: 'clamp(0.7rem, 1.2vw, 0.8125rem)', fontWeight: 300, letterSpacing: '0.08em', lineHeight: 1.7 }}
         >
           Reimagining capital stewardship<br />for intergenerational prosperity.
         </p>
 
         <div className="mt-10 flex items-center gap-2">
           <span className="inline-block w-1.5 h-1.5 rounded-full"
-            style={{ background: v.text, animation: 'pulse 2.5s ease-in-out infinite' }} />
+            style={{ background: s.text, animation: 'pulse 2.5s ease-in-out infinite' }} />
           <span className="uppercase"
-            style={{ color: v.faint, fontSize: '0.625rem', letterSpacing: '0.2em', fontWeight: 400 }}
+            style={{ color: s.faint, fontSize: '0.625rem', letterSpacing: '0.2em', fontWeight: 400 }}
           >
             Helsinki, 2026
           </span>
@@ -149,26 +242,26 @@ function ComingSoon() {
 
         <a href="#white-paper"
           className="mt-8 transition-colors duration-700"
-          style={{ color: v.faint, fontSize: '0.6875rem', letterSpacing: '0.06em', fontWeight: 300 }}
-          onMouseEnter={e => (e.currentTarget.style.color = v.text)}
-          onMouseLeave={e => (e.currentTarget.style.color = v.faint)}
+          style={{ color: s.faint, fontSize: '0.6875rem', letterSpacing: '0.06em', fontWeight: 300 }}
+          onMouseEnter={e => (e.currentTarget.style.color = s.text)}
+          onMouseLeave={e => (e.currentTarget.style.color = s.faint)}
         >
           hello@upstreaminstitute.org
         </a>
 
         <a href="#white-paper"
           className="mt-5 flex items-center gap-2 group transition-colors duration-700"
-          style={{ color: v.ghost, fontSize: '0.625rem', letterSpacing: '0.15em', fontWeight: 300, textTransform: 'uppercase' as const }}
-          onMouseEnter={e => (e.currentTarget.style.color = v.muted)}
-          onMouseLeave={e => (e.currentTarget.style.color = v.ghost)}
+          style={{ color: s.ghost, fontSize: '0.625rem', letterSpacing: '0.15em', fontWeight: 300, textTransform: 'uppercase' as const }}
+          onMouseEnter={e => (e.currentTarget.style.color = s.muted)}
+          onMouseLeave={e => (e.currentTarget.style.color = s.ghost)}
         >
-          <span className="inline-block transition-colors duration-700" style={{ width: '1rem', height: '1px', background: v.ghost }} />
+          <span className="inline-block transition-colors duration-700" style={{ width: '1rem', height: '1px', background: s.ghost }} />
           Read White Paper
         </a>
       </div>
 
-      <div className="absolute bottom-6">
-        <span style={{ color: v.ghost, fontSize: '0.5rem', letterSpacing: '0.15em', fontWeight: 300 }}>&reg;</span>
+      <div className="absolute bottom-6" style={{ zIndex: 2 }}>
+        <span style={{ color: s.ghost, fontSize: '0.5rem', letterSpacing: '0.15em', fontWeight: 300 }}>&reg;</span>
       </div>
 
       <style jsx>{`
@@ -183,10 +276,20 @@ function ComingSoon() {
 
 /* ───────────────────────── WHITE PAPER ───────────────────────── */
 
+const TOC = [
+  { id: 'authors', label: 'About the Authors' },
+  { id: 'introduction', label: 'Introduction: The Crisis of Thought' },
+  { id: 'landscape', label: 'The Intellectual Landscape' },
+  { id: 'premises', label: 'Challenging the Fundamental Premises' },
+  { id: 'operations', label: 'How We Operate' },
+  { id: 'endowment', label: 'A New Standard for Endowment Returns' },
+  { id: 'conclusion', label: 'Conclusion' },
+]
+
 function WhitePaper() {
   const { theme } = useTheme()
   const [ready, setReady] = useState(false)
-  const v = c(theme)
+  const s = v(theme)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -197,34 +300,32 @@ function WhitePaper() {
   return (
     <div
       className={`min-h-screen transition-colors duration-500 ${ready ? 'opacity-100' : 'opacity-0'}`}
-      style={{ transitionProperty: 'opacity, background-color, color', background: v.bg, color: v.text }}
+      style={{ transitionProperty: 'opacity, background-color, color', background: s.bg, color: s.text }}
     >
-      <Grain opacity={0.015} />
-
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-6 md:px-12 py-5"
-        style={{ background: v.navBg, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 100 }}
+        style={{ background: s.navBg, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 100 }}
       >
         <a href="#"
           className="transition-colors duration-500"
-          style={{ color: v.text, fontSize: '0.6875rem', letterSpacing: '0.2em', fontWeight: 600, textTransform: 'uppercase' as const }}
+          style={{ color: s.text, fontSize: '0.6875rem', letterSpacing: '0.2em', fontWeight: 600, textTransform: 'uppercase' as const }}
         >
           Upstream Institute
         </a>
         <a href="#"
           className="transition-colors duration-500"
-          style={{ color: v.faint, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 400 }}
-          onMouseEnter={e => (e.currentTarget.style.color = v.text)}
-          onMouseLeave={e => (e.currentTarget.style.color = v.faint)}
+          style={{ color: s.faint, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 400 }}
+          onMouseEnter={e => (e.currentTarget.style.color = s.text)}
+          onMouseLeave={e => (e.currentTarget.style.color = s.faint)}
         >
           Back
         </a>
       </nav>
 
       {/* Hero */}
-      <header className="pt-32 pb-20 md:pt-40 md:pb-28 px-6 md:px-12 max-w-3xl mx-auto text-center">
+      <header className="pt-32 pb-12 md:pt-40 md:pb-16 px-6 md:px-12 max-w-3xl mx-auto text-center">
         <p className="uppercase mb-8"
-          style={{ color: v.muted, fontSize: '0.625rem', letterSpacing: '0.3em', fontWeight: 600 }}
+          style={{ color: s.muted, fontSize: '0.625rem', letterSpacing: '0.3em', fontWeight: 600 }}
         >
           White Paper
         </p>
@@ -232,30 +333,52 @@ function WhitePaper() {
           Thinking Upstream
         </h1>
         <p className="mt-5 max-w-lg mx-auto"
-          style={{ color: v.muted, fontSize: 'clamp(0.8125rem, 1.3vw, 1rem)', fontWeight: 300, letterSpacing: '0.01em', lineHeight: 1.65 }}
+          style={{ color: s.muted, fontSize: 'clamp(0.8125rem, 1.3vw, 1rem)', fontWeight: 300, letterSpacing: '0.01em', lineHeight: 1.65 }}
         >
           A New School of Thought for Finance, Policy, and Planetary Regeneration
         </p>
         <div className="flex items-center justify-center gap-6 mt-10 flex-wrap"
-          style={{ fontSize: '0.6875rem', fontWeight: 400, letterSpacing: '0.04em', lineHeight: 1.6, color: v.muted }}
+          style={{ fontSize: '0.6875rem', fontWeight: 400, letterSpacing: '0.04em', lineHeight: 1.6, color: s.muted }}
         >
           <span>Dr. Paavo Pylkk&auml;nen</span>
-          <span style={{ color: v.ghost }}>|</span>
+          <span style={{ color: s.ghost }}>|</span>
           <span>Dr. Elina Pylkk&auml;nen</span>
-          <span style={{ color: v.ghost }}>|</span>
+          <span style={{ color: s.ghost }}>|</span>
           <span>Sagar Tandon</span>
         </div>
-        <p className="mt-3" style={{ color: v.faint, fontSize: '0.6875rem', fontWeight: 300, letterSpacing: '0.04em' }}>
+        <p className="mt-3" style={{ color: s.faint, fontSize: '0.6875rem', fontWeight: 300, letterSpacing: '0.04em' }}>
           Helsinki, Finland &middot; June 2026
         </p>
       </header>
 
-      {/* Body — white text, bold white headings */}
+      {/* Table of Contents */}
+      <div className="max-w-2xl mx-auto px-6 md:px-12 mb-16">
+        <div style={{ borderTop: `1px solid ${s.divider}`, borderBottom: `1px solid ${s.divider}` }} className="py-8">
+          <p className="uppercase mb-5" style={{ color: s.faint, fontSize: '0.625rem', letterSpacing: '0.2em', fontWeight: 600 }}>Index</p>
+          <ol className="space-y-3">
+            {TOC.map((item, i) => (
+              <li key={item.id}>
+                <a href={`#${item.id}`}
+                  className="transition-colors duration-300"
+                  style={{ color: s.muted, fontSize: '0.8125rem', fontWeight: 400, letterSpacing: '0.02em', lineHeight: 1.5 }}
+                  onMouseEnter={e => (e.currentTarget.style.color = s.text)}
+                  onMouseLeave={e => (e.currentTarget.style.color = s.muted)}
+                >
+                  <span style={{ color: s.faint, marginRight: '0.75rem', fontSize: '0.75rem' }}>{String(i + 1).padStart(2, '0')}</span>
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      {/* Body */}
       <article
         className="max-w-2xl mx-auto px-6 md:px-12 pb-32"
-        style={{ fontSize: 'clamp(0.9375rem, 1.15vw, 1.0625rem)', fontWeight: 300, lineHeight: 1.85, color: v.text }}
+        style={{ fontSize: 'clamp(0.9375rem, 1.15vw, 1.0625rem)', fontWeight: 300, lineHeight: 1.85, color: s.text }}
       >
-        <WPSection title="About the Authors">
+        <WPSection id="authors" title="About the Authors">
           <WPAuthor name="Dr. Paavo Pylkk&auml;nen" role="Philosophical Director">
             Dr. Pylkk&auml;nen is a distinguished philosopher whose decades of work on physicist David Bohm&rsquo;s theories of quantum physics and consciousness provide the ontological foundation for the Upstream Institute. He has extensively researched the concept of the &ldquo;Implicate Order&rdquo;&mdash;the view that reality is an unbroken, flowing whole rather than a collection of isolated parts. At the Institute, Dr. Pylkk&auml;nen directs intellectual coherence, ensuring that all research, policy design, and capital deployment transcend the limitations of fragmented, mechanical thought.
           </WPAuthor>
@@ -263,18 +386,18 @@ function WhitePaper() {
             Dr. Pylkk&auml;nen is a distinguished economist currently serving as Under-Secretary of State at Finland&rsquo;s Ministry of Economic Affairs and Employment. She holds a PhD in Economics and has previously served as Director of the Labor Institute for Economic Research (LABORE), Senior Economist at the OECD in Paris, and Visiting Scholar at Stanford University. Dr. Pylkk&auml;nen brings unparalleled expertise in labor markets, taxation, and social policy design. She leads the Upstream Nordic Social Policy Research Lab, translating philosophical frameworks into rigorous, population-scale economic interventions.
           </WPAuthor>
           <WPAuthor name="Sagar Tandon" role="Impact Finance Director">
-            Mr. Tandon is a Partner at Beyond Impact VC and a veteran impact financier with deep experience launching funds and leading dozens of early-stage investments across climate and regenerative agriculture. He serves as an advisor to 2X Global (gender-smart investing) and Stanford GSB Corporate Innovation LEAD. At the Upstream Institute, Mr. Tandon leads the execution arm, acting as the bridge between abstract philosophical principles and the concrete design and deployment of regenerative financial products.
+            Sagar Tandon is a Partner at Beyond Impact VC, investing in industrial biotech and climate-bio companies globally. He also advises the Society for Cell Agriculture APAC and supports several climate initiatives, including WePlanet.org and Atlan.fi, EIT, Good Food Institute, Big Ideas Ventures, Fashion For Good, and Rethinking Materials as a strategic advisor and mentor. A 2X Global Forum member, he promotes gender and climate-smart impact investing. Currently, he serves as an honorary advisory board member of EIT Community New European Bauhaus. In his investing career, he has led investments in more than 25+ startups and launched 3 funds from emerging markets - India and Southeast Asia to developed markets (Europe, the US, and East Asia). He has built and run an accelerator for aspiring female fund managers, supported by an Australian government-funded project, Frontier Lab Asia, and Gray Matters Capital. He writes a substack newsletter (https://firstfollowers.substack.com/) with more than 4,000 subscribers about venture capital, private markets, impact investing, venture studios, and more.
           </WPAuthor>
         </WPSection>
 
-        <WPSection title="Introduction: The Crisis of Thought">
+        <WPSection id="introduction" title="Introduction: The Crisis of Thought">
           <p>The physicist and philosopher David Bohm argued that humanity&rsquo;s deepest crises are not primarily technical or political&mdash;they are crises of &ldquo;thought.&rdquo; He observed that thought is a system: fragments of the past that we project onto the present, mistakenly believing we are engaging directly with reality.</p>
           <p>Modern economics is a profound symptom of this crisis. It is built on a classical, Newtonian paradigm that treats the economy as a machine made of isolated parts&mdash;firms, consumers, resources&mdash;that can be optimized independently. This mechanical worldview has generated unprecedented technological advancement, but it has done so by treating social fragmentation and ecological degradation as acceptable externalities.</p>
           <p>To solve the systemic crises of the 21st century, we cannot simply optimize the old machine. We must change the nature of the thought that built it.</p>
           <p>The Upstream Institute exists to generate an entirely new school of thought. We are not merely a think tank producing papers, nor are we a traditional investment fund. We are an integrated ecosystem uniting deep quantum philosophy, population-scale policy research, and the real-world execution of capital. We exist to fundamentally reimagine the roles of the state, the financier, the individual, and nature.</p>
         </WPSection>
 
-        <WPSection title="The Intellectual Landscape: Why Existing Institutions Fail">
+        <WPSection id="landscape" title="The Intellectual Landscape: Why Existing Institutions Fail">
           <p>The global landscape is saturated with think tanks, research institutes, and impact funds. Yet, none possess the philosophical foundation or the structural integration required to shift economic paradigms.</p>
           <WPSubSection title="The Orthodox Free-Market Tanks (e.g., The Hoover Institution, Cato Institute)">
             <p>These institutions operate firmly within the Newtonian paradigm. They view the economy as a mechanistic system of independent agents. Their policy prescriptions&mdash;deregulation, privatization, minimal state intervention&mdash;optimize for aggregate growth while treating ecological and social decay as the cost of doing business. They challenge the role of the state, but only to shrink it, never to reimagine its fundamental purpose in an entangled world.</p>
@@ -290,7 +413,7 @@ function WhitePaper() {
           </WPSubSection>
         </WPSection>
 
-        <WPSection title="Challenging the Fundamental Premises">
+        <WPSection id="premises" title="Challenging the Fundamental Premises">
           <p>The Upstream Institute is built to systematically dismantle and rebuild the foundational roles of our modern economy. We challenge four basic premises:</p>
           <WPPremise number="1" label="The Role of the State"
             oldPremise="The state is either an intrusive regulator to be minimized, or a night-watchman protecting property rights."
@@ -310,7 +433,7 @@ function WhitePaper() {
           />
         </WPSection>
 
-        <WPSection title="How We Operate: Features and Functions">
+        <WPSection id="operations" title="How We Operate: Features and Functions">
           <p>To manifest this new school of thought, the Upstream Institute operates through three interconnected arms. This is not a loose coalition; it is a unified feedback loop where theory informs capital, and capital generates data that refines theory.</p>
           <WPSubSection title="Arm 1: The Upstream Think Tank (Tool Builders)">
             <p>Traditional think tanks produce opinion pieces and policy briefs. The Upstream Think Tank produces <em>tools</em>.</p>
@@ -337,38 +460,38 @@ function WhitePaper() {
           </WPSubSection>
         </WPSection>
 
-        <WPSection title="A New Standard for Endowment Returns">
+        <WPSection id="endowment" title="A New Standard for Endowment Returns">
           <p>Traditional endowments often target high nominal returns by heavily weighting illiquid venture capital and leveraged buyouts&mdash;strategies that frequently rely on extraction and the externalization of social costs.</p>
           <p>The Upstream Endowment operates on a new thesis: <em>systemic risk is massively underpriced.</em> Climate disaster, social polarization, and supply chain collapse are not externalities; they are fundamental financial risks.</p>
           <p>By investing exclusively in regenerative structures&mdash;evergreen funds, outcomes-based bonds, and patient SME financing&mdash;we demonstrate that structurally safe, ethical capital deployment generates resilient, sustainable yield over a generational horizon. We reject the false dichotomy that doing good requires losing money. By pricing in true systemic risk, we prove that regeneration is the most prudent long-term investment strategy.</p>
         </WPSection>
 
-        <WPSection title="Conclusion: Beyond Fragmented Thought">
+        <WPSection id="conclusion" title="Conclusion: Beyond Fragmented Thought">
           <p>As David Bohm warned, we cannot solve our systemic crises using the same fragmented thought that created them. The traditional ecosystem of think tanks and financial institutions is endlessly rearranging the deck chairs on a sinking ship. They debate the mechanics of an engine that is fundamentally destroying the planet.</p>
           <p>The Upstream Institute exists to build an entirely new engine.</p>
           <p>By rooting the role of finance and economy in quantum philosophy, by producing rigorous new research for policymakers and capitalists, and by physically building the financial products&mdash;from SME financing to child poverty bonds&mdash;that execute this vision, we bypass the limits of fragmented thought.</p>
           <p>We do not just analyze the system. We build the tools to replace it.</p>
-          <p style={{ color: v.muted, fontStyle: 'italic' }}>
+          <p style={{ color: s.muted, fontStyle: 'italic' }}>
             From Finland, we invite the world to think upstream.
           </p>
         </WPSection>
 
         {/* Footer */}
-        <footer className="mt-24 pt-8" style={{ borderTop: `1px solid ${v.divider}` }}>
+        <footer className="mt-24 pt-8" style={{ borderTop: `1px solid ${s.divider}` }}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <p style={{ color: v.text, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.06em' }}>
+              <p style={{ color: s.text, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.06em' }}>
                 The Upstream Institute
               </p>
-              <p style={{ color: v.faint, fontSize: '0.6875rem', fontWeight: 300 }}>
+              <p style={{ color: s.faint, fontSize: '0.6875rem', fontWeight: 300 }}>
                 Helsinki, Finland
               </p>
             </div>
             <a href="mailto:hello@upstreaminstitute.org"
               className="transition-colors duration-500"
-              style={{ color: v.faint, fontSize: '0.6875rem', fontWeight: 300, letterSpacing: '0.03em' }}
-              onMouseEnter={e => (e.currentTarget.style.color = v.text)}
-              onMouseLeave={e => (e.currentTarget.style.color = v.faint)}
+              style={{ color: s.faint, fontSize: '0.6875rem', fontWeight: 300, letterSpacing: '0.03em' }}
+              onMouseEnter={e => (e.currentTarget.style.color = s.text)}
+              onMouseLeave={e => (e.currentTarget.style.color = s.faint)}
             >
               hello@upstreaminstitute.org
             </a>
@@ -379,13 +502,11 @@ function WhitePaper() {
   )
 }
 
-/* ───────────────────────── WHITE PAPER SUB-COMPONENTS ───────────────────────── */
+/* ───────────────────────── WHITE PAPER COMPONENTS ───────────────────────── */
 
-function WPSection({ title, children }: { title: string; children: React.ReactNode }) {
-  const { theme } = useTheme()
-  const v = c(theme)
+function WPSection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-16 md:mb-20">
+    <section id={id} className="mb-16 md:mb-20">
       <h2 className="mb-8" style={{ fontSize: 'clamp(1.125rem, 2vw, 1.375rem)', fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.35 }}>
         {title}
       </h2>
@@ -396,7 +517,7 @@ function WPSection({ title, children }: { title: string; children: React.ReactNo
 
 function WPSubSection({ title, children }: { title: string; children: React.ReactNode }) {
   const { theme } = useTheme()
-  const v = c(theme)
+  const s = v(theme)
   return (
     <div className="mb-8 last:mb-0">
       <h3 className="mb-3" style={{ fontSize: 'clamp(0.9375rem, 1.3vw, 1.0625rem)', fontWeight: 600, letterSpacing: '0.01em', lineHeight: 1.45 }}>
@@ -409,12 +530,12 @@ function WPSubSection({ title, children }: { title: string; children: React.Reac
 
 function WPAuthor({ name, role, children }: { name: string; role: string; children: React.ReactNode }) {
   const { theme } = useTheme()
-  const v = c(theme)
+  const s = v(theme)
   return (
     <div className="mb-8 last:mb-0">
       <p style={{ fontWeight: 600, lineHeight: 1.5 }}>
         <span dangerouslySetInnerHTML={{ __html: name }} />
-        <span className="ml-2" style={{ color: v.faint, fontSize: '0.875em' }}>| {role}</span>
+        <span className="ml-2" style={{ color: s.faint, fontSize: '0.875em' }}>| {role}</span>
       </p>
       <p className="mt-2">{children}</p>
     </div>
@@ -425,26 +546,26 @@ function WPPremise({ number, label, oldPremise, newPremise }: {
   number: string; label: string; oldPremise: string; newPremise: string
 }) {
   const { theme } = useTheme()
-  const v = c(theme)
+  const s = v(theme)
   return (
-    <div className="my-8 pl-5" style={{ borderLeft: `1px solid ${v.divider}` }}>
+    <div className="my-8 pl-5" style={{ borderLeft: `1px solid ${s.divider}` }}>
       <p className="mb-3" style={{ fontWeight: 600, lineHeight: 1.4 }}>
-        <span className="mr-2" style={{ color: v.faint }}>{number}.</span>
+        <span className="mr-2" style={{ color: s.faint }}>{number}.</span>
         {label}
       </p>
-      <p className="mb-2" style={{ color: v.muted, fontSize: '0.9em' }}>
-        <span className="uppercase" style={{ color: v.faint, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 600 }}>The Old Premise: </span>
+      <p className="mb-2" style={{ color: s.muted, fontSize: '0.9em' }}>
+        <span className="uppercase" style={{ color: s.faint, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 600 }}>The Old Premise: </span>
         <span dangerouslySetInnerHTML={{ __html: oldPremise }} />
       </p>
       <p>
-        <span className="uppercase" style={{ color: v.muted, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 600 }}>The Upstream Premise: </span>
+        <span className="uppercase" style={{ color: s.muted, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 600 }}>The Upstream Premise: </span>
         <span dangerouslySetInnerHTML={{ __html: newPremise }} />
       </p>
     </div>
   )
 }
 
-/* ───────────────────────── MAIN ROUTER ───────────────────────── */
+/* ───────────────────────── ROUTER ───────────────────────── */
 
 export default function Home() {
   const [view, setView] = useState<'landing' | 'white-paper'>(() =>
