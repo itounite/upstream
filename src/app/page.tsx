@@ -4,9 +4,6 @@ import { useEffect, useState, createContext, useContext } from 'react'
 
 /* ───────────────────────── THEME ───────────────────────── */
 
-const RED = '#7F1D1D'
-const RED_RGB = '127, 29, 29'
-
 type Theme = 'dark' | 'light'
 
 const ThemeCtx = createContext<{ theme: Theme; toggle: () => void }>({ theme: 'dark', toggle: () => {} })
@@ -18,8 +15,7 @@ function useTheme() {
 function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'dark'
-    const stored = localStorage.getItem('ui-theme') as Theme | null
-    return stored || 'dark'
+    return (localStorage.getItem('ui-theme') as Theme) || 'dark'
   })
 
   useEffect(() => {
@@ -32,58 +28,46 @@ function ThemeProvider({ children }: { children: React.ReactNode }) {
   return <ThemeCtx.Provider value={{ theme, toggle }}>{children}</ThemeCtx.Provider>
 }
 
-/* Color helpers */
-function t(theme: Theme) {
-  const isDark = theme === 'dark'
+/* Color helpers — pure white/black, no red */
+function c(theme: Theme) {
+  const d = theme === 'dark'
   return {
-    bg: isDark ? '#000000' : '#FFFFFF',
-    text: isDark ? '#FFFFFF' : '#000000',
-    red: RED,
-    muted1: isDark ? `rgba(${RED_RGB}, 1)` : `rgba(${RED_RGB}, 0.95)`,
-    muted2: isDark ? `rgba(${RED_RGB}, 0.8)` : `rgba(${RED_RGB}, 0.75)`,
-    muted3: isDark ? `rgba(${RED_RGB}, 0.6)` : `rgba(${RED_RGB}, 0.6)`,
-    muted4: isDark ? `rgba(${RED_RGB}, 0.45)` : `rgba(${RED_RGB}, 0.45)`,
-    muted5: isDark ? `rgba(${RED_RGB}, 0.35)` : `rgba(${RED_RGB}, 0.3)`,
-    divider: isDark ? `rgba(${RED_RGB}, 0.35)` : `rgba(${RED_RGB}, 0.25)`,
-    navBg: isDark ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)',
-    grainOpacity: isDark ? 0.02 : 0.015,
+    bg:       d ? '#000000' : '#FFFFFF',
+    text:     d ? '#FFFFFF' : '#000000',
+    muted:    d ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
+    faint:    d ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.3)',
+    ghost:    d ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.15)',
+    divider:  d ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)',
+    navBg:    d ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.9)',
   }
 }
 
-/* ───────────────────────── TOGGLE BUTTON ───────────────────────── */
+/* ───────────────────────── TOGGLE ───────────────────────── */
 
 function ThemeToggle() {
   const { theme, toggle } = useTheme()
+  const colors = c(theme)
   const isDark = theme === 'dark'
-  const c = t(theme)
 
   return (
     <button
       onClick={toggle}
-      className="fixed z-50 flex items-center justify-center transition-all duration-500 hover:scale-110 cursor-pointer"
+      className="fixed cursor-pointer flex items-center justify-center transition-all duration-300 hover:scale-110"
       style={{
         bottom: '1.5rem',
         right: '1.5rem',
-        width: '2.25rem',
-        height: '2.25rem',
+        width: '2.75rem',
+        height: '2.75rem',
         borderRadius: '50%',
-        border: `1px solid ${c.divider}`,
-        background: c.bg,
+        border: `1.5px solid ${colors.muted}`,
+        background: colors.bg,
+        zIndex: 9999,
       }}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke={c.muted3}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke={colors.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         {isDark ? (
-          /* Sun icon */
           <>
             <circle cx="12" cy="12" r="5" />
             <line x1="12" y1="1" x2="12" y2="3" />
@@ -96,7 +80,6 @@ function ThemeToggle() {
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
           </>
         ) : (
-          /* Moon icon */
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
         )}
       </svg>
@@ -104,13 +87,14 @@ function ThemeToggle() {
   )
 }
 
-/* ───────────────────────── GRAIN OVERLAY ───────────────────────── */
+/* ───────────────────────── GRAIN ───────────────────────── */
 
 function Grain({ opacity }: { opacity: number }) {
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-[1]"
+      className="fixed inset-0 pointer-events-none"
       style={{
+        zIndex: 1,
         opacity,
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         backgroundRepeat: 'repeat',
@@ -125,7 +109,7 @@ function Grain({ opacity }: { opacity: number }) {
 function ComingSoon() {
   const { theme } = useTheme()
   const [visible, setVisible] = useState(false)
-  const c = t(theme)
+  const v = c(theme)
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 100)
@@ -134,32 +118,30 @@ function ComingSoon() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-6 relative transition-colors duration-500"
-      style={{ background: c.bg, color: c.text }}
+      style={{ background: v.bg, color: v.text }}
     >
-      <Grain opacity={c.grainOpacity} />
+      <Grain opacity={0.02} />
 
       <div className={`flex flex-col items-center transition-all duration-[2000ms] ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <h1 className="tracking-[0.35em] uppercase text-center select-none"
-          style={{ fontSize: 'clamp(1.25rem, 3.5vw, 2.25rem)', fontWeight: 700, letterSpacing: '0.35em', lineHeight: 1.4 }}
+          style={{ fontSize: 'clamp(1.25rem, 3.5vw, 2.25rem)', fontWeight: 300, letterSpacing: '0.35em', lineHeight: 1.4 }}
         >
           Upstream<br />Institute
         </h1>
 
-        <div className="w-12 my-8" style={{ height: '1px', background: c.divider }} />
+        <div className="w-12 my-8" style={{ height: '1px', background: v.divider }} />
 
         <p className="text-center max-w-xs"
-          style={{ color: c.muted1, fontSize: 'clamp(0.7rem, 1.2vw, 0.8125rem)', fontWeight: 600, letterSpacing: '0.08em', lineHeight: 1.7 }}
+          style={{ color: v.muted, fontSize: 'clamp(0.7rem, 1.2vw, 0.8125rem)', fontWeight: 300, letterSpacing: '0.08em', lineHeight: 1.7 }}
         >
           Reimagining capital stewardship<br />for intergenerational prosperity.
         </p>
 
         <div className="mt-10 flex items-center gap-2">
-          <span
-            className="inline-block w-1.5 h-1.5 rounded-full"
-            style={{ background: c.muted1, animation: 'pulse 2.5s ease-in-out infinite' }}
-          />
+          <span className="inline-block w-1.5 h-1.5 rounded-full"
+            style={{ background: v.text, animation: 'pulse 2.5s ease-in-out infinite' }} />
           <span className="uppercase"
-            style={{ color: c.muted2, fontSize: '0.625rem', letterSpacing: '0.2em', fontWeight: 700 }}
+            style={{ color: v.faint, fontSize: '0.625rem', letterSpacing: '0.2em', fontWeight: 400 }}
           >
             Helsinki, 2026
           </span>
@@ -167,26 +149,26 @@ function ComingSoon() {
 
         <a href="#white-paper"
           className="mt-8 transition-colors duration-700"
-          style={{ color: c.muted3, fontSize: '0.6875rem', letterSpacing: '0.06em', fontWeight: 600 }}
-          onMouseEnter={e => (e.currentTarget.style.color = c.muted1)}
-          onMouseLeave={e => (e.currentTarget.style.color = c.muted3)}
+          style={{ color: v.faint, fontSize: '0.6875rem', letterSpacing: '0.06em', fontWeight: 300 }}
+          onMouseEnter={e => (e.currentTarget.style.color = v.text)}
+          onMouseLeave={e => (e.currentTarget.style.color = v.faint)}
         >
           hello@upstreaminstitute.org
         </a>
 
         <a href="#white-paper"
           className="mt-5 flex items-center gap-2 group transition-colors duration-700"
-          style={{ color: c.muted4, fontSize: '0.625rem', letterSpacing: '0.15em', fontWeight: 700, textTransform: 'uppercase' }}
-          onMouseEnter={e => { e.currentTarget.style.color = c.muted1 }}
-          onMouseLeave={e => { e.currentTarget.style.color = c.muted4 }}
+          style={{ color: v.ghost, fontSize: '0.625rem', letterSpacing: '0.15em', fontWeight: 300, textTransform: 'uppercase' as const }}
+          onMouseEnter={e => (e.currentTarget.style.color = v.muted)}
+          onMouseLeave={e => (e.currentTarget.style.color = v.ghost)}
         >
-          <span className="inline-block transition-colors duration-700" style={{ width: '1rem', height: '1px', background: c.muted5 }} />
+          <span className="inline-block transition-colors duration-700" style={{ width: '1rem', height: '1px', background: v.ghost }} />
           Read White Paper
         </a>
       </div>
 
       <div className="absolute bottom-6">
-        <span style={{ color: c.muted4, fontSize: '0.5rem', letterSpacing: '0.15em', fontWeight: 700 }}>&reg;</span>
+        <span style={{ color: v.ghost, fontSize: '0.5rem', letterSpacing: '0.15em', fontWeight: 300 }}>&reg;</span>
       </div>
 
       <style jsx>{`
@@ -204,7 +186,7 @@ function ComingSoon() {
 function WhitePaper() {
   const { theme } = useTheme()
   const [ready, setReady] = useState(false)
-  const c = t(theme)
+  const v = c(theme)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -215,36 +197,34 @@ function WhitePaper() {
   return (
     <div
       className={`min-h-screen transition-colors duration-500 ${ready ? 'opacity-100' : 'opacity-0'}`}
-      style={{ transitionProperty: 'opacity, background-color, color', background: c.bg, color: c.text }}
+      style={{ transitionProperty: 'opacity, background-color, color', background: v.bg, color: v.text }}
     >
-      <Grain opacity={c.grainOpacity} />
+      <Grain opacity={0.015} />
 
-      {/* Top nav */}
-      <nav className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between px-6 md:px-12 py-5"
-        style={{ background: c.navBg, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+      {/* Nav */}
+      <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-6 md:px-12 py-5"
+        style={{ background: v.navBg, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 100 }}
       >
         <a href="#"
           className="transition-colors duration-500"
-          style={{ color: c.muted1, fontSize: '0.6875rem', letterSpacing: '0.2em', fontWeight: 600, textTransform: 'uppercase' }}
-          onMouseEnter={e => (e.currentTarget.style.color = c.text)}
-          onMouseLeave={e => (e.currentTarget.style.color = c.muted2)}
+          style={{ color: v.text, fontSize: '0.6875rem', letterSpacing: '0.2em', fontWeight: 600, textTransform: 'uppercase' as const }}
         >
           Upstream Institute
         </a>
         <a href="#"
           className="transition-colors duration-500"
-          style={{ color: c.muted1, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 600 }}
-          onMouseEnter={e => (e.currentTarget.style.color = c.muted1)}
-          onMouseLeave={e => (e.currentTarget.style.color = c.muted3)}
+          style={{ color: v.faint, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 400 }}
+          onMouseEnter={e => (e.currentTarget.style.color = v.text)}
+          onMouseLeave={e => (e.currentTarget.style.color = v.faint)}
         >
           Back
         </a>
       </nav>
 
-      {/* ─── HERO ─── */}
+      {/* Hero */}
       <header className="pt-32 pb-20 md:pt-40 md:pb-28 px-6 md:px-12 max-w-3xl mx-auto text-center">
         <p className="uppercase mb-8"
-          style={{ color: c.muted2, fontSize: '0.625rem', letterSpacing: '0.3em', fontWeight: 700 }}
+          style={{ color: v.muted, fontSize: '0.625rem', letterSpacing: '0.3em', fontWeight: 600 }}
         >
           White Paper
         </p>
@@ -252,143 +232,143 @@ function WhitePaper() {
           Thinking Upstream
         </h1>
         <p className="mt-5 max-w-lg mx-auto"
-          style={{ color: c.muted1, fontSize: 'clamp(0.8125rem, 1.3vw, 1rem)', fontWeight: 600, letterSpacing: '0.01em', lineHeight: 1.65 }}
+          style={{ color: v.muted, fontSize: 'clamp(0.8125rem, 1.3vw, 1rem)', fontWeight: 300, letterSpacing: '0.01em', lineHeight: 1.65 }}
         >
           A New School of Thought for Finance, Policy, and Planetary Regeneration
         </p>
         <div className="flex items-center justify-center gap-6 mt-10 flex-wrap"
-          style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.04em', lineHeight: 1.6, color: c.muted1 }}
+          style={{ fontSize: '0.6875rem', fontWeight: 400, letterSpacing: '0.04em', lineHeight: 1.6, color: v.muted }}
         >
           <span>Dr. Paavo Pylkk&auml;nen</span>
-          <span style={{ color: c.muted5 }}>|</span>
+          <span style={{ color: v.ghost }}>|</span>
           <span>Dr. Elina Pylkk&auml;nen</span>
-          <span style={{ color: c.muted5 }}>|</span>
+          <span style={{ color: v.ghost }}>|</span>
           <span>Sagar Tandon</span>
         </div>
-        <p className="mt-3" style={{ color: c.muted3, fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.04em' }}>
+        <p className="mt-3" style={{ color: v.faint, fontSize: '0.6875rem', fontWeight: 300, letterSpacing: '0.04em' }}>
           Helsinki, Finland &middot; June 2026
         </p>
       </header>
 
-      {/* ─── BODY ─── */}
+      {/* Body — white text, bold white headings */}
       <article
         className="max-w-2xl mx-auto px-6 md:px-12 pb-32"
-        style={{ fontSize: 'clamp(0.9375rem, 1.15vw, 1.0625rem)', fontWeight: 500, lineHeight: 1.85, color: c.muted2 }}
+        style={{ fontSize: 'clamp(0.9375rem, 1.15vw, 1.0625rem)', fontWeight: 300, lineHeight: 1.85, color: v.text }}
       >
-        <Section title="About the Authors">
-          <AuthorBlock name="Dr. Paavo Pylkk&auml;nen" role="Philosophical Director">
+        <WPSection title="About the Authors">
+          <WPAuthor name="Dr. Paavo Pylkk&auml;nen" role="Philosophical Director">
             Dr. Pylkk&auml;nen is a distinguished philosopher whose decades of work on physicist David Bohm&rsquo;s theories of quantum physics and consciousness provide the ontological foundation for the Upstream Institute. He has extensively researched the concept of the &ldquo;Implicate Order&rdquo;&mdash;the view that reality is an unbroken, flowing whole rather than a collection of isolated parts. At the Institute, Dr. Pylkk&auml;nen directs intellectual coherence, ensuring that all research, policy design, and capital deployment transcend the limitations of fragmented, mechanical thought.
-          </AuthorBlock>
-          <AuthorBlock name="Dr. Elina Pylkk&auml;nen" role="Social Policy Director">
+          </WPAuthor>
+          <WPAuthor name="Dr. Elina Pylkk&auml;nen" role="Social Policy Director">
             Dr. Pylkk&auml;nen is a distinguished economist currently serving as Under-Secretary of State at Finland&rsquo;s Ministry of Economic Affairs and Employment. She holds a PhD in Economics and has previously served as Director of the Labor Institute for Economic Research (LABORE), Senior Economist at the OECD in Paris, and Visiting Scholar at Stanford University. Dr. Pylkk&auml;nen brings unparalleled expertise in labor markets, taxation, and social policy design. She leads the Upstream Nordic Social Policy Research Lab, translating philosophical frameworks into rigorous, population-scale economic interventions.
-          </AuthorBlock>
-          <AuthorBlock name="Sagar Tandon" role="Impact Finance Director">
+          </WPAuthor>
+          <WPAuthor name="Sagar Tandon" role="Impact Finance Director">
             Mr. Tandon is a Partner at Beyond Impact VC and a veteran impact financier with deep experience launching funds and leading dozens of early-stage investments across climate and regenerative agriculture. He serves as an advisor to 2X Global (gender-smart investing) and Stanford GSB Corporate Innovation LEAD. At the Upstream Institute, Mr. Tandon leads the execution arm, acting as the bridge between abstract philosophical principles and the concrete design and deployment of regenerative financial products.
-          </AuthorBlock>
-        </Section>
+          </WPAuthor>
+        </WPSection>
 
-        <Section title="Introduction: The Crisis of Thought">
+        <WPSection title="Introduction: The Crisis of Thought">
           <p>The physicist and philosopher David Bohm argued that humanity&rsquo;s deepest crises are not primarily technical or political&mdash;they are crises of &ldquo;thought.&rdquo; He observed that thought is a system: fragments of the past that we project onto the present, mistakenly believing we are engaging directly with reality.</p>
           <p>Modern economics is a profound symptom of this crisis. It is built on a classical, Newtonian paradigm that treats the economy as a machine made of isolated parts&mdash;firms, consumers, resources&mdash;that can be optimized independently. This mechanical worldview has generated unprecedented technological advancement, but it has done so by treating social fragmentation and ecological degradation as acceptable externalities.</p>
           <p>To solve the systemic crises of the 21st century, we cannot simply optimize the old machine. We must change the nature of the thought that built it.</p>
           <p>The Upstream Institute exists to generate an entirely new school of thought. We are not merely a think tank producing papers, nor are we a traditional investment fund. We are an integrated ecosystem uniting deep quantum philosophy, population-scale policy research, and the real-world execution of capital. We exist to fundamentally reimagine the roles of the state, the financier, the individual, and nature.</p>
-        </Section>
+        </WPSection>
 
-        <Section title="The Intellectual Landscape: Why Existing Institutions Fail">
+        <WPSection title="The Intellectual Landscape: Why Existing Institutions Fail">
           <p>The global landscape is saturated with think tanks, research institutes, and impact funds. Yet, none possess the philosophical foundation or the structural integration required to shift economic paradigms.</p>
-          <SubSection title="The Orthodox Free-Market Tanks (e.g., The Hoover Institution, Cato Institute)">
+          <WPSubSection title="The Orthodox Free-Market Tanks (e.g., The Hoover Institution, Cato Institute)">
             <p>These institutions operate firmly within the Newtonian paradigm. They view the economy as a mechanistic system of independent agents. Their policy prescriptions&mdash;deregulation, privatization, minimal state intervention&mdash;optimize for aggregate growth while treating ecological and social decay as the cost of doing business. They challenge the role of the state, but only to shrink it, never to reimagine its fundamental purpose in an entangled world.</p>
-          </SubSection>
-          <SubSection title="The Centrist Reform Tanks (e.g., The Brookings Institution)">
+          </WPSubSection>
+          <WPSubSection title="The Centrist Reform Tanks (e.g., The Brookings Institution)">
             <p>Centrist institutions attempt to patch the mechanical model. They advocate for moderate redistribution, human capital investment, and targeted regulations. However, they still operate entirely within the confines of neoclassical economics. They seek to make extraction more palatable, not to replace extraction with regeneration. Their research influences policy at the margins, but it leaves the foundational premises of modern capitalism untouched.</p>
-          </SubSection>
-          <SubSection title="The ESG and Impact Investment Consensus">
+          </WPSubSection>
+          <WPSubSection title="The ESG and Impact Investment Consensus">
             <p>The financial sector has responded to systemic crises with &ldquo;ESG&rdquo; and &ldquo;impact investing.&rdquo; However, as Bohm would note, this is often fragmented thought in action. ESG largely involves applying a thin ethical veneer to the exact same extractive capital structures. Impact investing frequently accepts a false dichotomy: that doing good requires sacrificing financial return. Furthermore, they lack a rigorous philosophical arm; they deploy capital without challenging the legal and ontological frameworks that make extraction possible in the first place.</p>
-          </SubSection>
-          <SubSection title="The Upstream Differentiator">
+          </WPSubSection>
+          <WPSubSection title="The Upstream Differentiator">
             <p>The Upstream Institute is the first institution to fuse deep philosophy, rigorous policy research, and an executing endowment into a single entity. We do not write papers to be read; we write theories to be codified into financial products and state policy. We do not invest to generate alpha; we invest to prove that regeneration is the highest form of yield.</p>
-          </SubSection>
-        </Section>
+          </WPSubSection>
+        </WPSection>
 
-        <Section title="Challenging the Fundamental Premises">
+        <WPSection title="Challenging the Fundamental Premises">
           <p>The Upstream Institute is built to systematically dismantle and rebuild the foundational roles of our modern economy. We challenge four basic premises:</p>
-          <PremiseBlock number="1" label="The Role of the State"
+          <WPPremise number="1" label="The Role of the State"
             oldPremise="The state is either an intrusive regulator to be minimized, or a night-watchman protecting property rights."
             newPremise="The state is a Systemic Architect. Its role is not to correct market failures after the fact, but to design the legal, administrative, and infrastructural &ldquo;soil&rdquo; in which regenerative capital grows."
           />
-          <PremiseBlock number="2" label="The Role of the Financier"
+          <WPPremise number="2" label="The Role of the Financier"
             oldPremise="The financier is a passive allocator of capital seeking risk-adjusted financial returns, detached from the real-world ripple effects of their allocations."
             newPremise="The financier is a Systemic Designer. Drawing on Bohm&rsquo;s concept of &ldquo;active information,&rdquo; we understand that money does not merely represent value&mdash;it shapes the material conditions of human life. Financiers must be structurally accountable for the social and ecological ripples of their capital."
           />
-          <PremiseBlock number="3" label="The Role of People"
+          <WPPremise number="3" label="The Role of People"
             oldPremise="People are &ldquo;human capital&rdquo; or &ldquo;consumers&rdquo;&mdash;isolated economic units to be optimized."
             newPremise="Drawing on the Japanese philosophy of Gapponism, people are entangled co-creators. Economic equality is not a luxury; it is a moral prerequisite. Without baseline security, individuals cannot participate in the co-creation of a thriving society."
           />
-          <PremiseBlock number="4" label="The Role of Nature"
+          <WPPremise number="4" label="The Role of Nature"
             oldPremise="Nature is an externality, a bottomless sink for waste, or a passive asset class to be priced via carbon offsets."
             newPremise="Nature is the foundational substrate of all capital. If nature degrades, capital degrades. Financial products must be structurally tethered to ecological regeneration, not abstract accounting tricks."
           />
-        </Section>
+        </WPSection>
 
-        <Section title="How We Operate: Features and Functions">
+        <WPSection title="How We Operate: Features and Functions">
           <p>To manifest this new school of thought, the Upstream Institute operates through three interconnected arms. This is not a loose coalition; it is a unified feedback loop where theory informs capital, and capital generates data that refines theory.</p>
-          <SubSection title="Arm 1: The Upstream Think Tank (Tool Builders)">
+          <WPSubSection title="Arm 1: The Upstream Think Tank (Tool Builders)">
             <p>Traditional think tanks produce opinion pieces and policy briefs. The Upstream Think Tank produces <em>tools</em>.</p>
             <ul>
               <li><strong>The &ldquo;Terms for Humanity&rdquo; Library:</strong> We curate a free, global repository of legal clauses, term sheets, and governance templates that legally embed stakeholder voice and ecological limits into investment agreements.</li>
               <li><strong>Humanized Finance Playbooks:</strong> Open-source architectural blueprints for Industrial Foundation 2.0, Serial Steward Models, and Impact-Aligned Executive Compensation.</li>
               <li><strong>Philosophical Translation:</strong> We translate complex quantum ontologies and ethical frameworks into rigorous, actionable doctrines for policymakers and capitalists.</li>
             </ul>
-          </SubSection>
-          <SubSection title="Arm 2: The Nordic Social Policy Research Lab (Evidence Generators)">
+          </WPSubSection>
+          <WPSubSection title="Arm 2: The Nordic Social Policy Research Lab (Evidence Generators)">
             <p>We do not speculate about what works; we prove it. Leveraging Finland&rsquo;s unique administrative infrastructure, the Lab treats the nation as a living laboratory.</p>
             <ul>
               <li><strong>Population-Scale Testing:</strong> We co-design interventions with the Finnish government&mdash;focusing on child poverty, homelessness, and social connection&mdash;and track the macroeconomic results across entire demographics over time.</li>
               <li><strong>Proving Entanglement:</strong> The Lab&rsquo;s primary function is to generate irrefutable data proving that social equity and economic dynamism are not opposed, but mathematically entangled.</li>
             </ul>
-          </SubSection>
-          <SubSection title="Arm 3: The Upstream Endowment (The Execution Arm)">
+          </WPSubSection>
+          <WPSubSection title="Arm 3: The Upstream Endowment (The Execution Arm)">
             <p>We do not just advocate for a new economy; we build it. The Endowment acts as an internal venture studio for financial products. We deploy permanent capital into structures that generate both financial yield and measurable healing.</p>
             <ul>
               <li><strong>SME Patient Capital Vehicles:</strong> Debt and equity hybrids that provide permanent capital to small and medium enterprises, prioritizing community resilience over extractive buyouts.</li>
               <li><strong>Child Poverty Impact Bonds:</strong> Outcomes-based financial instruments that direct private capital toward social interventions, paying returns strictly based on measured, verified reductions in child poverty.</li>
               <li><strong>Climate and Biodiversity Outcomes Bonds:</strong> Instruments that pay returns only when tangible ecosystem healing is scientifically verified, treating nature as a primary stakeholder.</li>
             </ul>
-          </SubSection>
-        </Section>
+          </WPSubSection>
+        </WPSection>
 
-        <Section title="A New Standard for Endowment Returns">
+        <WPSection title="A New Standard for Endowment Returns">
           <p>Traditional endowments often target high nominal returns by heavily weighting illiquid venture capital and leveraged buyouts&mdash;strategies that frequently rely on extraction and the externalization of social costs.</p>
           <p>The Upstream Endowment operates on a new thesis: <em>systemic risk is massively underpriced.</em> Climate disaster, social polarization, and supply chain collapse are not externalities; they are fundamental financial risks.</p>
           <p>By investing exclusively in regenerative structures&mdash;evergreen funds, outcomes-based bonds, and patient SME financing&mdash;we demonstrate that structurally safe, ethical capital deployment generates resilient, sustainable yield over a generational horizon. We reject the false dichotomy that doing good requires losing money. By pricing in true systemic risk, we prove that regeneration is the most prudent long-term investment strategy.</p>
-        </Section>
+        </WPSection>
 
-        <Section title="Conclusion: Beyond Fragmented Thought">
+        <WPSection title="Conclusion: Beyond Fragmented Thought">
           <p>As David Bohm warned, we cannot solve our systemic crises using the same fragmented thought that created them. The traditional ecosystem of think tanks and financial institutions is endlessly rearranging the deck chairs on a sinking ship. They debate the mechanics of an engine that is fundamentally destroying the planet.</p>
           <p>The Upstream Institute exists to build an entirely new engine.</p>
           <p>By rooting the role of finance and economy in quantum philosophy, by producing rigorous new research for policymakers and capitalists, and by physically building the financial products&mdash;from SME financing to child poverty bonds&mdash;that execute this vision, we bypass the limits of fragmented thought.</p>
           <p>We do not just analyze the system. We build the tools to replace it.</p>
-          <p style={{ color: c.muted1, fontStyle: 'italic' }}>
+          <p style={{ color: v.muted, fontStyle: 'italic' }}>
             From Finland, we invite the world to think upstream.
           </p>
-        </Section>
+        </WPSection>
 
-        {/* FOOTER */}
-        <footer className="mt-24 pt-8" style={{ borderTop: `1px solid ${c.divider}` }}>
+        {/* Footer */}
+        <footer className="mt-24 pt-8" style={{ borderTop: `1px solid ${v.divider}` }}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <p style={{ color: c.muted1, fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.06em' }}>
+              <p style={{ color: v.text, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.06em' }}>
                 The Upstream Institute
               </p>
-              <p style={{ color: c.muted3, fontSize: '0.6875rem', fontWeight: 500 }}>
+              <p style={{ color: v.faint, fontSize: '0.6875rem', fontWeight: 300 }}>
                 Helsinki, Finland
               </p>
             </div>
             <a href="mailto:hello@upstreaminstitute.org"
               className="transition-colors duration-500"
-              style={{ color: c.muted3, fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.03em' }}
-              onMouseEnter={e => (e.currentTarget.style.color = c.muted1)}
-              onMouseLeave={e => (e.currentTarget.style.color = c.muted3)}
+              style={{ color: v.faint, fontSize: '0.6875rem', fontWeight: 300, letterSpacing: '0.03em' }}
+              onMouseEnter={e => (e.currentTarget.style.color = v.text)}
+              onMouseLeave={e => (e.currentTarget.style.color = v.faint)}
             >
               hello@upstreaminstitute.org
             </a>
@@ -399,16 +379,14 @@ function WhitePaper() {
   )
 }
 
-/* ───────────────────────── SUB-COMPONENTS ───────────────────────── */
+/* ───────────────────────── WHITE PAPER SUB-COMPONENTS ───────────────────────── */
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function WPSection({ title, children }: { title: string; children: React.ReactNode }) {
   const { theme } = useTheme()
-  const c = t(theme)
+  const v = c(theme)
   return (
     <section className="mb-16 md:mb-20">
-      <h2 className="mb-8" style={{
-        fontSize: 'clamp(1.125rem, 2vw, 1.375rem)', fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.35,
-      }}>
+      <h2 className="mb-8" style={{ fontSize: 'clamp(1.125rem, 2vw, 1.375rem)', fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.35 }}>
         {title}
       </h2>
       <div className="space-y-5">{children}</div>
@@ -416,14 +394,12 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   )
 }
 
-function SubSection({ title, children }: { title: string; children: React.ReactNode }) {
+function WPSubSection({ title, children }: { title: string; children: React.ReactNode }) {
   const { theme } = useTheme()
-  const c = t(theme)
+  const v = c(theme)
   return (
     <div className="mb-8 last:mb-0">
-      <h3 className="mb-3" style={{
-        color: c.muted1, fontSize: 'clamp(0.9375rem, 1.3vw, 1.0625rem)', fontWeight: 600, letterSpacing: '0.01em', lineHeight: 1.45,
-      }}>
+      <h3 className="mb-3" style={{ fontSize: 'clamp(0.9375rem, 1.3vw, 1.0625rem)', fontWeight: 600, letterSpacing: '0.01em', lineHeight: 1.45 }}>
         {title}
       </h3>
       <div className="space-y-4">{children}</div>
@@ -431,37 +407,37 @@ function SubSection({ title, children }: { title: string; children: React.ReactN
   )
 }
 
-function AuthorBlock({ name, role, children }: { name: string; role: string; children: React.ReactNode }) {
+function WPAuthor({ name, role, children }: { name: string; role: string; children: React.ReactNode }) {
   const { theme } = useTheme()
-  const c = t(theme)
+  const v = c(theme)
   return (
     <div className="mb-8 last:mb-0">
-      <p style={{ color: c.text, fontWeight: 600, lineHeight: 1.5 }}>
+      <p style={{ fontWeight: 600, lineHeight: 1.5 }}>
         <span dangerouslySetInnerHTML={{ __html: name }} />
-        <span className="ml-2" style={{ color: c.muted1, fontSize: '0.875em' }}>| {role}</span>
+        <span className="ml-2" style={{ color: v.faint, fontSize: '0.875em' }}>| {role}</span>
       </p>
       <p className="mt-2">{children}</p>
     </div>
   )
 }
 
-function PremiseBlock({ number, label, oldPremise, newPremise }: {
+function WPPremise({ number, label, oldPremise, newPremise }: {
   number: string; label: string; oldPremise: string; newPremise: string
 }) {
   const { theme } = useTheme()
-  const c = t(theme)
+  const v = c(theme)
   return (
-    <div className="my-8 pl-5" style={{ borderLeft: `1px solid ${c.divider}` }}>
-      <p className="mb-3" style={{ color: c.text, fontWeight: 600, lineHeight: 1.4 }}>
-        <span className="mr-2" style={{ color: c.muted1 }}>{number}.</span>
+    <div className="my-8 pl-5" style={{ borderLeft: `1px solid ${v.divider}` }}>
+      <p className="mb-3" style={{ fontWeight: 600, lineHeight: 1.4 }}>
+        <span className="mr-2" style={{ color: v.faint }}>{number}.</span>
         {label}
       </p>
-      <p className="mb-2" style={{ color: c.muted2, fontSize: '0.9em' }}>
-        <span className="uppercase" style={{ color: c.muted3, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 700 }}>The Old Premise: </span>
+      <p className="mb-2" style={{ color: v.muted, fontSize: '0.9em' }}>
+        <span className="uppercase" style={{ color: v.faint, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 600 }}>The Old Premise: </span>
         <span dangerouslySetInnerHTML={{ __html: oldPremise }} />
       </p>
-      <p style={{ color: c.muted1 }}>
-        <span className="uppercase" style={{ color: c.muted1, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 700 }}>The Upstream Premise: </span>
+      <p>
+        <span className="uppercase" style={{ color: v.muted, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 600 }}>The Upstream Premise: </span>
         <span dangerouslySetInnerHTML={{ __html: newPremise }} />
       </p>
     </div>
