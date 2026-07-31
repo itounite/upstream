@@ -38,7 +38,8 @@ function v(theme: Theme) {
     ghost:    d ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)',
     divider:  d ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
     navBg:    d ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.9)',
-    forest:   d ? 'rgba(255,255,255,0.13)' : 'rgba(0,0,0,0.10)',
+    forestHome:   d ? 'rgba(180,150,100,0.18)' : 'rgba(160,130,80,0.14)',
+    forestWP:     d ? 'rgba(120,190,120,0.18)' : 'rgba(80,160,80,0.14)',
   }
 }
 
@@ -218,7 +219,7 @@ function ComingSoon() {
     <main className="min-h-screen flex flex-col items-center justify-center px-6 relative transition-colors duration-500"
       style={{ background: s.bg, color: s.text }}
     >
-      <NordicForest color={s.forest} />
+      <NordicForest color={s.forestHome} />
       <Grain />
 
       <div className={`flex flex-col items-center transition-all duration-[2000ms] ease-out relative ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
@@ -336,8 +337,9 @@ function WhitePaper() {
       className={`min-h-screen transition-colors duration-500 ${ready ? 'opacity-100' : 'opacity-0'}`}
       style={{ transitionProperty: 'opacity, background-color, color', background: s.bg, color: s.text }}
     >
+      <NordicForest color={s.forestWP} />
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-6 md:px-12 py-5"
+      <nav className="fixed top-0 left-0 right-0 flex items-center justify-center px-6 md:px-12 py-5"
         style={{ background: s.navBg, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 100 }}
       >
         <button
@@ -346,15 +348,6 @@ function WhitePaper() {
           style={{ color: s.text, fontSize: '0.6875rem', letterSpacing: '0.2em', fontWeight: 600, textTransform: 'uppercase' as const, background: 'none', border: 'none' }}
         >
           Upstream Institute
-        </button>
-        <button
-          onClick={() => { window.location.hash = '' }}
-          className="transition-colors duration-500 cursor-pointer"
-          style={{ color: s.faint, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 400, background: 'none', border: 'none' }}
-          onMouseEnter={e => (e.currentTarget.style.color = s.text)}
-          onMouseLeave={e => (e.currentTarget.style.color = s.faint)}
-        >
-          Back
         </button>
       </nav>
 
