@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, createContext, useContext } from 'react'
+import { useEffect, useState, createContext, useContext, useCallback } from 'react'
 
 /* ───────────────────────── THEME ───────────────────────── */
 
@@ -38,7 +38,7 @@ function v(theme: Theme) {
     ghost:    d ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)',
     divider:  d ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
     navBg:    d ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.9)',
-    forest:   d ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+    forest:   d ? 'rgba(255,255,255,0.13)' : 'rgba(0,0,0,0.10)',
   }
 }
 
@@ -87,78 +87,88 @@ function ThemeToggle() {
   )
 }
 
-/* ───────────────────────── Nordic Forest SVG ───────────────────────── */
+/* ───────────────────────── Nordic Forest SVG (left & right only) ───────────────────────── */
 
 function NordicForest({ color }: { color: string }) {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-      <svg className="absolute bottom-0 left-0 w-full" style={{ height: '70vh' }} viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" fill="none">
-        {/* Far back trees - smaller, fainter */}
-        <g stroke={color} strokeWidth="0.8" opacity="0.3">
-          <line x1="80" y1="900" x2="80" y2="620" /><polygon points="80,620 55,720 105,720" fill="none" stroke={color} strokeWidth="0.6" />
-          <line x1="200" y1="900" x2="200" y2="580" /><polygon points="200,580 170,690 230,690" fill="none" stroke={color} strokeWidth="0.6" />
-          <line x1="350" y1="900" x2="350" y2="600" /><polygon points="350,600 325,700 375,700" fill="none" stroke={color} strokeWidth="0.6" />
-          <line x1="520" y1="900" x2="520" y2="560" /><polygon points="520,560 490,670 550,670" fill="none" stroke={color} strokeWidth="0.6" />
-          <line x1="680" y1="900" x2="680" y2="590" /><polygon points="680,590 650,700 710,700" fill="none" stroke={color} strokeWidth="0.6" />
-          <line x1="850" y1="900" x2="850" y2="610" /><polygon points="850,610 820,710 880,710" fill="none" stroke={color} strokeWidth="0.6" />
-          <line x1="1000" y1="900" x2="1000" y2="570" /><polygon points="1000,570 970,680 1030,680" fill="none" stroke={color} strokeWidth="0.6" />
-          <line x1="1150" y1="900" x2="1150" y2="600" /><polygon points="1150,600 1120,710 1180,710" fill="none" stroke={color} strokeWidth="0.6" />
-          <line x1="1300" y1="900" x2="1300" y2="630" /><polygon points="1300,630 1275,730 1325,730" fill="none" stroke={color} strokeWidth="0.6" />
-          <line x1="1400" y1="900" x2="1400" y2="650" /><polygon points="1400,650 1378,740 1422,740" fill="none" stroke={color} strokeWidth="0.6" />
+      <svg className="absolute bottom-0 left-0 w-full" style={{ height: '75vh' }} viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" fill="none">
+        <g stroke={color} strokeWidth="0.7" opacity="0.5">
+          <line x1="20" y1="900" x2="20" y2="620" /><polygon points="20,620 2,710 38,710" fill="none" stroke={color} strokeWidth="0.5" />
+          <line x1="80" y1="900" x2="80" y2="580" /><polygon points="80,580 58,680 102,680" fill="none" stroke={color} strokeWidth="0.5" />
+          <line x1="150" y1="900" x2="150" y2="600" /><polygon points="150,600 128,700 172,700" fill="none" stroke={color} strokeWidth="0.5" />
+          <line x1="220" y1="900" x2="220" y2="560" /><polygon points="220,560 196,665 244,665" fill="none" stroke={color} strokeWidth="0.5" />
+          <line x1="300" y1="900" x2="300" y2="590" /><polygon points="300,590 278,690 322,690" fill="none" stroke={color} strokeWidth="0.5" />
         </g>
-        {/* Mid trees */}
-        <g stroke={color} strokeWidth="1" opacity="0.5">
-          <line x1="40" y1="900" x2="40" y2="500" />
-          <polygon points="40,500 5,630 75,630" fill="none" stroke={color} strokeWidth="0.8" />
-          <polygon points="40,560 15,650 65,650" fill="none" stroke={color} strokeWidth="0.8" />
-          <line x1="150" y1="900" x2="150" y2="480" />
-          <polygon points="150,480 110,620 190,620" fill="none" stroke={color} strokeWidth="0.8" />
-          <polygon points="150,550 125,640 175,640" fill="none" stroke={color} strokeWidth="0.8" />
-          <line x1="300" y1="900" x2="300" y2="460" />
-          <polygon points="300,460 260,600 340,600" fill="none" stroke={color} strokeWidth="0.8" />
-          <polygon points="300,530 275,620 325,620" fill="none" stroke={color} strokeWidth="0.8" />
-          <line x1="470" y1="900" x2="470" y2="490" />
-          <polygon points="470,490 435,610 505,610" fill="none" stroke={color} strokeWidth="0.8" />
-          <polygon points="470,555 448,635 492,635" fill="none" stroke={color} strokeWidth="0.8" />
-          <line x1="620" y1="900" x2="620" y2="470" />
-          <polygon points="620,470 585,600 655,600" fill="none" stroke={color} strokeWidth="0.8" />
-          <polygon points="620,540 598,625 642,625" fill="none" stroke={color} strokeWidth="0.8" />
-          <line x1="780" y1="900" x2="780" y2="500" />
-          <polygon points="780,500 745,620 815,620" fill="none" stroke={color} strokeWidth="0.8" />
-          <polygon points="780,565 758,645 802,645" fill="none" stroke={color} strokeWidth="0.8" />
-          <line x1="940" y1="900" x2="940" y2="450" />
-          <polygon points="940,450 900,590 980,590" fill="none" stroke={color} strokeWidth="0.8" />
-          <polygon points="940,520 918,610 962,610" fill="none" stroke={color} strokeWidth="0.8" />
-          <line x1="1100" y1="900" x2="1100" y2="480" />
-          <polygon points="1100,480 1065,610 1135,610" fill="none" stroke={color} strokeWidth="0.8" />
-          <polygon points="1100,550 1078,635 1122,635" fill="none" stroke={color} strokeWidth="0.8" />
-          <line x1="1250" y1="900" x2="1250" y2="470" />
-          <polygon points="1250,470 1215,600 1285,600" fill="none" stroke={color} strokeWidth="0.8" />
-          <polygon points="1250,540 1228,625 1272,625" fill="none" stroke={color} strokeWidth="0.8" />
-          <line x1="1380" y1="900" x2="1380" y2="510" />
-          <polygon points="1380,510 1350,630 1410,630" fill="none" stroke={color} strokeWidth="0.8" />
+        <g stroke={color} strokeWidth="1" opacity="0.7">
+          <line x1="50" y1="900" x2="50" y2="480" />
+          <polygon points="50,480 20,600 80,600" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="50,550 28,640 72,640" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="130" y1="900" x2="130" y2="450" />
+          <polygon points="130,450 95,580 165,580" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="130,530 108,620 152,620" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="210" y1="900" x2="210" y2="470" />
+          <polygon points="210,470 178,595 242,595" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="210,540 190,625 230,625" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="290" y1="900" x2="290" y2="500" />
+          <polygon points="290,500 260,610 320,610" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="290,565 272,640 308,640" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="360" y1="900" x2="360" y2="490" />
+          <polygon points="360,490 332,600 388,600" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="360,555 342,630 378,630" fill="none" stroke={color} strokeWidth="0.8" />
         </g>
-        {/* Front trees - tallest, boldest */}
-        <g stroke={color} strokeWidth="1.2" opacity="0.7">
-          <line x1="120" y1="900" x2="120" y2="380" />
-          <polygon points="120,380 75,530 165,530" fill="none" stroke={color} strokeWidth="1" />
-          <polygon points="120,460 90,560 150,560" fill="none" stroke={color} strokeWidth="1" />
-          <polygon points="120,530 100,600 140,600" fill="none" stroke={color} strokeWidth="1" />
-          <line x1="420" y1="900" x2="420" y2="360" />
-          <polygon points="420,360 375,510 465,510" fill="none" stroke={color} strokeWidth="1" />
-          <polygon points="420,440 392,540 448,540" fill="none" stroke={color} strokeWidth="1" />
-          <polygon points="420,510 400,580 440,580" fill="none" stroke={color} strokeWidth="1" />
-          <line x1="720" y1="900" x2="720" y2="370" />
-          <polygon points="720,370 675,520 765,520" fill="none" stroke={color} strokeWidth="1" />
-          <polygon points="720,450 692,550 748,550" fill="none" stroke={color} strokeWidth="1" />
-          <polygon points="720,520 700,590 740,590" fill="none" stroke={color} strokeWidth="1" />
-          <line x1="1050" y1="900" x2="1050" y2="350" />
-          <polygon points="1050,350 1000,500 1100,500" fill="none" stroke={color} strokeWidth="1" />
-          <polygon points="1050,430 1020,535 1080,535" fill="none" stroke={color} strokeWidth="1" />
-          <polygon points="1050,500 1030,580 1070,580" fill="none" stroke={color} strokeWidth="1" />
-          <line x1="1320" y1="900" x2="1320" y2="400" />
-          <polygon points="1320,400 1280,530 1360,530" fill="none" stroke={color} strokeWidth="1" />
-          <polygon points="1320,470 1295,555 1345,555" fill="none" stroke={color} strokeWidth="1" />
+        <g stroke={color} strokeWidth="1.3" opacity="0.9">
+          <line x1="35" y1="900" x2="35" y2="370" />
+          <polygon points="35,370 -5,510 75,510" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="35,440 10,545 60,545" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="35,510 18,585 52,585" fill="none" stroke={color} strokeWidth="1" />
+          <line x1="170" y1="900" x2="170" y2="350" />
+          <polygon points="170,350 130,490 210,490" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="170,420 145,525 195,525" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="170,490 152,570 188,570" fill="none" stroke={color} strokeWidth="1" />
+          <line x1="320" y1="900" x2="320" y2="380" />
+          <polygon points="320,380 282,515 358,515" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="320,450 298,545 342,545" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="320,520 305,590 335,590" fill="none" stroke={color} strokeWidth="1" />
+        </g>
+
+        <g stroke={color} strokeWidth="0.7" opacity="0.5">
+          <line x1="1140" y1="900" x2="1140" y2="610" /><polygon points="1140,610 1118,705 1162,705" fill="none" stroke={color} strokeWidth="0.5" />
+          <line x1="1210" y1="900" x2="1210" y2="570" /><polygon points="1210,570 1186,670 1234,670" fill="none" stroke={color} strokeWidth="0.5" />
+          <line x1="1280" y1="900" x2="1280" y2="590" /><polygon points="1280,590 1258,690 1302,690" fill="none" stroke={color} strokeWidth="0.5" />
+          <line x1="1350" y1="900" x2="1350" y2="550" /><polygon points="1350,550 1326,655 1374,655" fill="none" stroke={color} strokeWidth="0.5" />
+          <line x1="1420" y1="900" x2="1420" y2="620" /><polygon points="1420,620 1402,710 1438,710" fill="none" stroke={color} strokeWidth="0.5" />
+        </g>
+        <g stroke={color} strokeWidth="1" opacity="0.7">
+          <line x1="1080" y1="900" x2="1080" y2="490" />
+          <polygon points="1080,490 1050,605 1110,605" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="1080,560 1060,640 1100,640" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="1160" y1="900" x2="1160" y2="460" />
+          <polygon points="1160,460 1128,585 1192,585" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="1160,535 1140,625 1180,625" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="1240" y1="900" x2="1240" y2="480" />
+          <polygon points="1240,480 1210,600 1270,600" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="1240,550 1222,635 1258,635" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="1320" y1="900" x2="1320" y2="470" />
+          <polygon points="1320,470 1292,595 1348,595" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="1320,540 1304,625 1336,625" fill="none" stroke={color} strokeWidth="0.8" />
+          <line x1="1400" y1="900" x2="1400" y2="500" />
+          <polygon points="1400,500 1375,605 1425,605" fill="none" stroke={color} strokeWidth="0.8" />
+          <polygon points="1400,565 1385,635 1415,635" fill="none" stroke={color} strokeWidth="0.8" />
+        </g>
+        <g stroke={color} strokeWidth="1.3" opacity="0.9">
+          <line x1="1120" y1="900" x2="1120" y2="360" />
+          <polygon points="1120,360 1080,500 1160,500" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="1120,430 1095,535 1145,535" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="1120,500 1102,580 1138,580" fill="none" stroke={color} strokeWidth="1" />
+          <line x1="1270" y1="900" x2="1270" y2="340" />
+          <polygon points="1270,340 1230,480 1310,480" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="1270,410 1248,520 1292,520" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="1270,480 1255,565 1285,565" fill="none" stroke={color} strokeWidth="1" />
+          <line x1="1400" y1="900" x2="1400" y2="375" />
+          <polygon points="1400,375 1365,505 1435,505" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="1400,445 1380,540 1420,540" fill="none" stroke={color} strokeWidth="1" />
+          <polygon points="1400,515 1388,585 1412,585" fill="none" stroke={color} strokeWidth="1" />
         </g>
       </svg>
     </div>
@@ -187,12 +197,17 @@ function Grain() {
 function ComingSoon() {
   const { theme } = useTheme()
   const [visible, setVisible] = useState(false)
+  const [hovered, setHovered] = useState(false)
   const s = v(theme)
   const isDark = theme === 'dark'
 
   const glow = isDark
     ? '0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(255,255,255,0.08)'
     : '0 0 40px rgba(0,0,0,0.12), 0 0 80px rgba(0,0,0,0.06)'
+
+  const btnGlow = isDark
+    ? '0 0 20px rgba(255,255,255,0.08)'
+    : '0 0 20px rgba(0,0,0,0.06)'
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 100)
@@ -230,7 +245,29 @@ function ComingSoon() {
           Reimagining capital stewardship<br />for intergenerational prosperity.
         </p>
 
-        <div className="mt-10 flex items-center gap-2">
+        {/* Modern Read White Paper Button */}
+        <button
+          onClick={() => { window.location.hash = 'white-paper' }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className="mt-10 cursor-pointer transition-all duration-300"
+          style={{
+            padding: '0.7rem 2rem',
+            border: `1px solid ${hovered ? s.text : s.muted}`,
+            borderRadius: '2px',
+            background: 'transparent',
+            color: s.text,
+            fontSize: '0.6875rem',
+            fontWeight: 500,
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase' as const,
+            boxShadow: hovered ? btnGlow : 'none',
+          }}
+        >
+          Read White Paper
+        </button>
+
+        <div className="mt-8 flex items-center gap-2">
           <span className="inline-block w-1.5 h-1.5 rounded-full"
             style={{ background: s.text, animation: 'pulse 2.5s ease-in-out infinite' }} />
           <span className="uppercase"
@@ -240,23 +277,13 @@ function ComingSoon() {
           </span>
         </div>
 
-        <a href="#white-paper"
-          className="mt-8 transition-colors duration-700"
+        <a href="mailto:hello@upstreaminstitute.org"
+          className="mt-6 transition-colors duration-700"
           style={{ color: s.faint, fontSize: '0.6875rem', letterSpacing: '0.06em', fontWeight: 300 }}
           onMouseEnter={e => (e.currentTarget.style.color = s.text)}
           onMouseLeave={e => (e.currentTarget.style.color = s.faint)}
         >
           hello@upstreaminstitute.org
-        </a>
-
-        <a href="#white-paper"
-          className="mt-5 flex items-center gap-2 group transition-colors duration-700"
-          style={{ color: s.ghost, fontSize: '0.625rem', letterSpacing: '0.15em', fontWeight: 300, textTransform: 'uppercase' as const }}
-          onMouseEnter={e => (e.currentTarget.style.color = s.muted)}
-          onMouseLeave={e => (e.currentTarget.style.color = s.ghost)}
-        >
-          <span className="inline-block transition-colors duration-700" style={{ width: '1rem', height: '1px', background: s.ghost }} />
-          Read White Paper
         </a>
       </div>
 
@@ -277,19 +304,26 @@ function ComingSoon() {
 /* ───────────────────────── WHITE PAPER ───────────────────────── */
 
 const TOC = [
-  { id: 'authors', label: 'About the Authors' },
   { id: 'introduction', label: 'Introduction: The Crisis of Thought' },
   { id: 'landscape', label: 'The Intellectual Landscape' },
   { id: 'premises', label: 'Challenging the Fundamental Premises' },
   { id: 'operations', label: 'How We Operate' },
   { id: 'endowment', label: 'A New Standard for Endowment Returns' },
   { id: 'conclusion', label: 'Conclusion' },
+  { id: 'authors', label: 'About the Authors' },
 ]
 
 function WhitePaper() {
   const { theme } = useTheme()
   const [ready, setReady] = useState(false)
   const s = v(theme)
+
+  const scrollTo = useCallback((id: string) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -306,20 +340,22 @@ function WhitePaper() {
       <nav className="fixed top-0 left-0 right-0 flex items-center justify-between px-6 md:px-12 py-5"
         style={{ background: s.navBg, backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', zIndex: 100 }}
       >
-        <a href="#"
-          className="transition-colors duration-500"
-          style={{ color: s.text, fontSize: '0.6875rem', letterSpacing: '0.2em', fontWeight: 600, textTransform: 'uppercase' as const }}
+        <button
+          onClick={() => { window.location.hash = '' }}
+          className="transition-colors duration-500 cursor-pointer"
+          style={{ color: s.text, fontSize: '0.6875rem', letterSpacing: '0.2em', fontWeight: 600, textTransform: 'uppercase' as const, background: 'none', border: 'none' }}
         >
           Upstream Institute
-        </a>
-        <a href="#"
-          className="transition-colors duration-500"
-          style={{ color: s.faint, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 400 }}
+        </button>
+        <button
+          onClick={() => { window.location.hash = '' }}
+          className="transition-colors duration-500 cursor-pointer"
+          style={{ color: s.faint, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 400, background: 'none', border: 'none' }}
           onMouseEnter={e => (e.currentTarget.style.color = s.text)}
           onMouseLeave={e => (e.currentTarget.style.color = s.faint)}
         >
           Back
-        </a>
+        </button>
       </nav>
 
       {/* Hero */}
@@ -358,15 +394,16 @@ function WhitePaper() {
           <ol className="space-y-3">
             {TOC.map((item, i) => (
               <li key={item.id}>
-                <a href={`#${item.id}`}
-                  className="transition-colors duration-300"
-                  style={{ color: s.muted, fontSize: '0.8125rem', fontWeight: 400, letterSpacing: '0.02em', lineHeight: 1.5 }}
+                <button
+                  onClick={(e) => { e.preventDefault(); scrollTo(item.id) }}
+                  className="transition-colors duration-300 cursor-pointer text-left w-full"
+                  style={{ color: s.muted, fontSize: '0.8125rem', fontWeight: 400, letterSpacing: '0.02em', lineHeight: 1.5, background: 'none', border: 'none', padding: 0 }}
                   onMouseEnter={e => (e.currentTarget.style.color = s.text)}
                   onMouseLeave={e => (e.currentTarget.style.color = s.muted)}
                 >
                   <span style={{ color: s.faint, marginRight: '0.75rem', fontSize: '0.75rem' }}>{String(i + 1).padStart(2, '0')}</span>
                   {item.label}
-                </a>
+                </button>
               </li>
             ))}
           </ol>
@@ -378,18 +415,6 @@ function WhitePaper() {
         className="max-w-2xl mx-auto px-6 md:px-12 pb-32"
         style={{ fontSize: 'clamp(0.9375rem, 1.15vw, 1.0625rem)', fontWeight: 300, lineHeight: 1.85, color: s.text }}
       >
-        <WPSection id="authors" title="About the Authors">
-          <WPAuthor name="Dr. Paavo Pylkk&auml;nen" role="Philosophical Director">
-            Dr. Pylkk&auml;nen is a distinguished philosopher whose decades of work on physicist David Bohm&rsquo;s theories of quantum physics and consciousness provide the ontological foundation for the Upstream Institute. He has extensively researched the concept of the &ldquo;Implicate Order&rdquo;&mdash;the view that reality is an unbroken, flowing whole rather than a collection of isolated parts. At the Institute, Dr. Pylkk&auml;nen directs intellectual coherence, ensuring that all research, policy design, and capital deployment transcend the limitations of fragmented, mechanical thought.
-          </WPAuthor>
-          <WPAuthor name="Dr. Elina Pylkk&auml;nen" role="Social Policy Director">
-            Dr. Pylkk&auml;nen is a distinguished economist currently serving as Under-Secretary of State at Finland&rsquo;s Ministry of Economic Affairs and Employment. She holds a PhD in Economics and has previously served as Director of the Labor Institute for Economic Research (LABORE), Senior Economist at the OECD in Paris, and Visiting Scholar at Stanford University. Dr. Pylkk&auml;nen brings unparalleled expertise in labor markets, taxation, and social policy design. She leads the Upstream Nordic Social Policy Research Lab, translating philosophical frameworks into rigorous, population-scale economic interventions.
-          </WPAuthor>
-          <WPAuthor name="Sagar Tandon" role="Impact Finance Director">
-            Sagar Tandon is a Partner at Beyond Impact VC, investing in industrial biotech and climate-bio companies globally. He also advises the Society for Cell Agriculture APAC and supports several climate initiatives, including WePlanet.org and Atlan.fi, EIT, Good Food Institute, Big Ideas Ventures, Fashion For Good, and Rethinking Materials as a strategic advisor and mentor. A 2X Global Forum member, he promotes gender and climate-smart impact investing. Currently, he serves as an honorary advisory board member of EIT Community New European Bauhaus. In his investing career, he has led investments in more than 25+ startups and launched 3 funds from emerging markets - India and Southeast Asia to developed markets (Europe, the US, and East Asia). He has built and run an accelerator for aspiring female fund managers, supported by an Australian government-funded project, Frontier Lab Asia, and Gray Matters Capital. He writes a substack newsletter (https://firstfollowers.substack.com/) with more than 4,000 subscribers about venture capital, private markets, impact investing, venture studios, and more.
-          </WPAuthor>
-        </WPSection>
-
         <WPSection id="introduction" title="Introduction: The Crisis of Thought">
           <p>The physicist and philosopher David Bohm argued that humanity&rsquo;s deepest crises are not primarily technical or political&mdash;they are crises of &ldquo;thought.&rdquo; He observed that thought is a system: fragments of the past that we project onto the present, mistakenly believing we are engaging directly with reality.</p>
           <p>Modern economics is a profound symptom of this crisis. It is built on a classical, Newtonian paradigm that treats the economy as a machine made of isolated parts&mdash;firms, consumers, resources&mdash;that can be optimized independently. This mechanical worldview has generated unprecedented technological advancement, but it has done so by treating social fragmentation and ecological degradation as acceptable externalities.</p>
@@ -476,6 +501,19 @@ function WhitePaper() {
           </p>
         </WPSection>
 
+        {/* Authors - at the END */}
+        <WPSection id="authors" title="About the Authors">
+          <WPAuthor name="Dr. Paavo Pylkk&auml;nen" role="Philosophical Director">
+            Dr. Pylkk&auml;nen is a distinguished philosopher whose decades of work on physicist David Bohm&rsquo;s theories of quantum physics and consciousness provide the ontological foundation for the Upstream Institute. He has extensively researched the concept of the &ldquo;Implicate Order&rdquo;&mdash;the view that reality is an unbroken, flowing whole rather than a collection of isolated parts. At the Institute, Dr. Pylkk&auml;nen directs intellectual coherence, ensuring that all research, policy design, and capital deployment transcend the limitations of fragmented, mechanical thought.
+          </WPAuthor>
+          <WPAuthor name="Dr. Elina Pylkk&auml;nen" role="Social Policy Director">
+            Dr. Pylkk&auml;nen is a distinguished economist currently serving as Under-Secretary of State at Finland&rsquo;s Ministry of Economic Affairs and Employment. She holds a PhD in Economics and has previously served as Director of the Labor Institute for Economic Research (LABORE), Senior Economist at the OECD in Paris, and Visiting Scholar at Stanford University. Dr. Pylkk&auml;nen brings unparalleled expertise in labor markets, taxation, and social policy design. She leads the Upstream Nordic Social Policy Research Lab, translating philosophical frameworks into rigorous, population-scale economic interventions.
+          </WPAuthor>
+          <WPAuthor name="Sagar Tandon" role="Impact Finance Director">
+            Sagar Tandon is a Partner at Beyond Impact VC, investing in industrial biotech and climate-bio companies globally. He also advises the Society for Cell Agriculture APAC and supports several climate initiatives, including WePlanet.org and Atlan.fi, EIT, Good Food Institute, Big Ideas Ventures, Fashion For Good, and Rethinking Materials as a strategic advisor and mentor. A 2X Global Forum member, he promotes gender and climate-smart impact investing. Currently, he serves as an honorary advisory board member of EIT Community New European Bauhaus. In his investing career, he has led investments in more than 25+ startups and launched 3 funds from emerging markets - India and Southeast Asia to developed markets (Europe, the US, and East Asia). He has built and run an accelerator for aspiring female fund managers, supported by an Australian government-funded project, Frontier Lab Asia, and Gray Matters Capital. He writes a substack newsletter (https://firstfollowers.substack.com/) with more than 4,000 subscribers about venture capital, private markets, impact investing, venture studios, and more.
+          </WPAuthor>
+        </WPSection>
+
         {/* Footer */}
         <footer className="mt-24 pt-8" style={{ borderTop: `1px solid ${s.divider}` }}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -506,7 +544,7 @@ function WhitePaper() {
 
 function WPSection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="mb-16 md:mb-20">
+    <section id={id} className="mb-16 md:mb-20" style={{ scrollMarginTop: '5rem' }}>
       <h2 className="mb-8" style={{ fontSize: 'clamp(1.125rem, 2vw, 1.375rem)', fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.35 }}>
         {title}
       </h2>
@@ -574,7 +612,12 @@ export default function Home() {
 
   useEffect(() => {
     const onHashChange = () => {
-      setView(window.location.hash === '#white-paper' ? 'white-paper' : 'landing')
+      const hash = window.location.hash
+      if (hash === '#white-paper') {
+        setView('white-paper')
+      } else {
+        setView('landing')
+      }
     }
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
