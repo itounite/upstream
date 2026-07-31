@@ -4,8 +4,8 @@ import { useEffect, useState, createContext, useContext } from 'react'
 
 /* ───────────────────────── THEME ───────────────────────── */
 
-const RED = '#B91C1C'
-const RED_RGB = '185, 28, 28'
+const RED = '#7F1D1D'
+const RED_RGB = '127, 29, 29'
 
 type Theme = 'dark' | 'light'
 
@@ -39,12 +39,12 @@ function t(theme: Theme) {
     bg: isDark ? '#000000' : '#FFFFFF',
     text: isDark ? '#FFFFFF' : '#000000',
     red: RED,
-    muted1: isDark ? `rgba(${RED_RGB}, 0.9)` : `rgba(${RED_RGB}, 0.85)`,
-    muted2: isDark ? `rgba(${RED_RGB}, 0.65)` : `rgba(${RED_RGB}, 0.6)`,
-    muted3: isDark ? `rgba(${RED_RGB}, 0.45)` : `rgba(${RED_RGB}, 0.45)`,
-    muted4: isDark ? `rgba(${RED_RGB}, 0.3)` : `rgba(${RED_RGB}, 0.3)`,
-    muted5: isDark ? `rgba(${RED_RGB}, 0.2)` : `rgba(${RED_RGB}, 0.2)`,
-    divider: isDark ? `rgba(${RED_RGB}, 0.15)` : `rgba(${RED_RGB}, 0.12)`,
+    muted1: isDark ? `rgba(${RED_RGB}, 1)` : `rgba(${RED_RGB}, 0.95)`,
+    muted2: isDark ? `rgba(${RED_RGB}, 0.8)` : `rgba(${RED_RGB}, 0.75)`,
+    muted3: isDark ? `rgba(${RED_RGB}, 0.6)` : `rgba(${RED_RGB}, 0.6)`,
+    muted4: isDark ? `rgba(${RED_RGB}, 0.45)` : `rgba(${RED_RGB}, 0.45)`,
+    muted5: isDark ? `rgba(${RED_RGB}, 0.35)` : `rgba(${RED_RGB}, 0.3)`,
+    divider: isDark ? `rgba(${RED_RGB}, 0.35)` : `rgba(${RED_RGB}, 0.25)`,
     navBg: isDark ? 'rgba(0,0,0,0.85)' : 'rgba(255,255,255,0.85)',
     grainOpacity: isDark ? 0.02 : 0.015,
   }
@@ -140,7 +140,7 @@ function ComingSoon() {
 
       <div className={`flex flex-col items-center transition-all duration-[2000ms] ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <h1 className="tracking-[0.35em] uppercase text-center select-none"
-          style={{ fontSize: 'clamp(1.25rem, 3.5vw, 2.25rem)', fontWeight: 300, letterSpacing: '0.35em', lineHeight: 1.4 }}
+          style={{ fontSize: 'clamp(1.25rem, 3.5vw, 2.25rem)', fontWeight: 700, letterSpacing: '0.35em', lineHeight: 1.4 }}
         >
           Upstream<br />Institute
         </h1>
@@ -148,7 +148,7 @@ function ComingSoon() {
         <div className="w-12 my-8" style={{ height: '1px', background: c.divider }} />
 
         <p className="text-center max-w-xs"
-          style={{ color: c.muted2, fontSize: 'clamp(0.7rem, 1.2vw, 0.8125rem)', fontWeight: 300, letterSpacing: '0.08em', lineHeight: 1.7 }}
+          style={{ color: c.muted1, fontSize: 'clamp(0.7rem, 1.2vw, 0.8125rem)', fontWeight: 600, letterSpacing: '0.08em', lineHeight: 1.7 }}
         >
           Reimagining capital stewardship<br />for intergenerational prosperity.
         </p>
@@ -159,7 +159,7 @@ function ComingSoon() {
             style={{ background: c.muted1, animation: 'pulse 2.5s ease-in-out infinite' }}
           />
           <span className="uppercase"
-            style={{ color: c.muted3, fontSize: '0.625rem', letterSpacing: '0.2em', fontWeight: 400 }}
+            style={{ color: c.muted2, fontSize: '0.625rem', letterSpacing: '0.2em', fontWeight: 700 }}
           >
             Helsinki, 2026
           </span>
@@ -167,18 +167,18 @@ function ComingSoon() {
 
         <a href="#white-paper"
           className="mt-8 transition-colors duration-700"
-          style={{ color: c.muted4, fontSize: '0.6875rem', letterSpacing: '0.06em', fontWeight: 300 }}
-          onMouseEnter={e => (e.currentTarget.style.color = c.muted2)}
-          onMouseLeave={e => (e.currentTarget.style.color = c.muted4)}
+          style={{ color: c.muted3, fontSize: '0.6875rem', letterSpacing: '0.06em', fontWeight: 600 }}
+          onMouseEnter={e => (e.currentTarget.style.color = c.muted1)}
+          onMouseLeave={e => (e.currentTarget.style.color = c.muted3)}
         >
           hello@upstreaminstitute.org
         </a>
 
         <a href="#white-paper"
           className="mt-5 flex items-center gap-2 group transition-colors duration-700"
-          style={{ color: c.muted5, fontSize: '0.625rem', letterSpacing: '0.15em', fontWeight: 300, textTransform: 'uppercase' }}
-          onMouseEnter={e => { e.currentTarget.style.color = c.muted3 }}
-          onMouseLeave={e => { e.currentTarget.style.color = c.muted5 }}
+          style={{ color: c.muted4, fontSize: '0.625rem', letterSpacing: '0.15em', fontWeight: 700, textTransform: 'uppercase' }}
+          onMouseEnter={e => { e.currentTarget.style.color = c.muted1 }}
+          onMouseLeave={e => { e.currentTarget.style.color = c.muted4 }}
         >
           <span className="inline-block transition-colors duration-700" style={{ width: '1rem', height: '1px', background: c.muted5 }} />
           Read White Paper
@@ -186,7 +186,7 @@ function ComingSoon() {
       </div>
 
       <div className="absolute bottom-6">
-        <span style={{ color: c.muted5, fontSize: '0.5rem', letterSpacing: '0.15em', fontWeight: 300 }}>&reg;</span>
+        <span style={{ color: c.muted4, fontSize: '0.5rem', letterSpacing: '0.15em', fontWeight: 700 }}>&reg;</span>
       </div>
 
       <style jsx>{`
@@ -225,7 +225,7 @@ function WhitePaper() {
       >
         <a href="#"
           className="transition-colors duration-500"
-          style={{ color: c.muted2, fontSize: '0.6875rem', letterSpacing: '0.2em', fontWeight: 300, textTransform: 'uppercase' }}
+          style={{ color: c.muted1, fontSize: '0.6875rem', letterSpacing: '0.2em', fontWeight: 600, textTransform: 'uppercase' }}
           onMouseEnter={e => (e.currentTarget.style.color = c.text)}
           onMouseLeave={e => (e.currentTarget.style.color = c.muted2)}
         >
@@ -233,7 +233,7 @@ function WhitePaper() {
         </a>
         <a href="#"
           className="transition-colors duration-500"
-          style={{ color: c.muted3, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 300 }}
+          style={{ color: c.muted1, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 600 }}
           onMouseEnter={e => (e.currentTarget.style.color = c.muted1)}
           onMouseLeave={e => (e.currentTarget.style.color = c.muted3)}
         >
@@ -244,20 +244,20 @@ function WhitePaper() {
       {/* ─── HERO ─── */}
       <header className="pt-32 pb-20 md:pt-40 md:pb-28 px-6 md:px-12 max-w-3xl mx-auto text-center">
         <p className="uppercase mb-8"
-          style={{ color: c.muted3, fontSize: '0.625rem', letterSpacing: '0.3em', fontWeight: 400 }}
+          style={{ color: c.muted2, fontSize: '0.625rem', letterSpacing: '0.3em', fontWeight: 700 }}
         >
           White Paper
         </p>
-        <h1 style={{ fontSize: 'clamp(1.75rem, 4.5vw, 3.25rem)', fontWeight: 300, letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+        <h1 style={{ fontSize: 'clamp(1.75rem, 4.5vw, 3.25rem)', fontWeight: 700, letterSpacing: '-0.01em', lineHeight: 1.2 }}>
           Thinking Upstream
         </h1>
         <p className="mt-5 max-w-lg mx-auto"
-          style={{ color: c.muted2, fontSize: 'clamp(0.8125rem, 1.3vw, 1rem)', fontWeight: 300, letterSpacing: '0.01em', lineHeight: 1.65 }}
+          style={{ color: c.muted1, fontSize: 'clamp(0.8125rem, 1.3vw, 1rem)', fontWeight: 600, letterSpacing: '0.01em', lineHeight: 1.65 }}
         >
           A New School of Thought for Finance, Policy, and Planetary Regeneration
         </p>
         <div className="flex items-center justify-center gap-6 mt-10 flex-wrap"
-          style={{ fontSize: '0.6875rem', fontWeight: 300, letterSpacing: '0.04em', lineHeight: 1.6, color: c.muted3 }}
+          style={{ fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.04em', lineHeight: 1.6, color: c.muted1 }}
         >
           <span>Dr. Paavo Pylkk&auml;nen</span>
           <span style={{ color: c.muted5 }}>|</span>
@@ -265,7 +265,7 @@ function WhitePaper() {
           <span style={{ color: c.muted5 }}>|</span>
           <span>Sagar Tandon</span>
         </div>
-        <p className="mt-3" style={{ color: c.muted4, fontSize: '0.6875rem', fontWeight: 300, letterSpacing: '0.04em' }}>
+        <p className="mt-3" style={{ color: c.muted3, fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.04em' }}>
           Helsinki, Finland &middot; June 2026
         </p>
       </header>
@@ -273,7 +273,7 @@ function WhitePaper() {
       {/* ─── BODY ─── */}
       <article
         className="max-w-2xl mx-auto px-6 md:px-12 pb-32"
-        style={{ fontSize: 'clamp(0.9375rem, 1.15vw, 1.0625rem)', fontWeight: 300, lineHeight: 1.85, color: c.muted2 }}
+        style={{ fontSize: 'clamp(0.9375rem, 1.15vw, 1.0625rem)', fontWeight: 500, lineHeight: 1.85, color: c.muted2 }}
       >
         <Section title="About the Authors">
           <AuthorBlock name="Dr. Paavo Pylkk&auml;nen" role="Philosophical Director">
@@ -377,18 +377,18 @@ function WhitePaper() {
         <footer className="mt-24 pt-8" style={{ borderTop: `1px solid ${c.divider}` }}>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <p style={{ color: c.muted2, fontSize: '0.75rem', fontWeight: 400, letterSpacing: '0.06em' }}>
+              <p style={{ color: c.muted1, fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.06em' }}>
                 The Upstream Institute
               </p>
-              <p style={{ color: c.muted4, fontSize: '0.6875rem', fontWeight: 300 }}>
+              <p style={{ color: c.muted3, fontSize: '0.6875rem', fontWeight: 500 }}>
                 Helsinki, Finland
               </p>
             </div>
             <a href="mailto:hello@upstreaminstitute.org"
               className="transition-colors duration-500"
-              style={{ color: c.muted4, fontSize: '0.6875rem', fontWeight: 300, letterSpacing: '0.03em' }}
-              onMouseEnter={e => (e.currentTarget.style.color = c.muted2)}
-              onMouseLeave={e => (e.currentTarget.style.color = c.muted4)}
+              style={{ color: c.muted3, fontSize: '0.6875rem', fontWeight: 600, letterSpacing: '0.03em' }}
+              onMouseEnter={e => (e.currentTarget.style.color = c.muted1)}
+              onMouseLeave={e => (e.currentTarget.style.color = c.muted3)}
             >
               hello@upstreaminstitute.org
             </a>
@@ -407,7 +407,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <section className="mb-16 md:mb-20">
       <h2 className="mb-8" style={{
-        fontSize: 'clamp(1.125rem, 2vw, 1.375rem)', fontWeight: 400, letterSpacing: '0.02em', lineHeight: 1.35,
+        fontSize: 'clamp(1.125rem, 2vw, 1.375rem)', fontWeight: 700, letterSpacing: '0.02em', lineHeight: 1.35,
       }}>
         {title}
       </h2>
@@ -422,7 +422,7 @@ function SubSection({ title, children }: { title: string; children: React.ReactN
   return (
     <div className="mb-8 last:mb-0">
       <h3 className="mb-3" style={{
-        color: c.muted1, fontSize: 'clamp(0.9375rem, 1.3vw, 1.0625rem)', fontWeight: 400, letterSpacing: '0.01em', lineHeight: 1.45,
+        color: c.muted1, fontSize: 'clamp(0.9375rem, 1.3vw, 1.0625rem)', fontWeight: 600, letterSpacing: '0.01em', lineHeight: 1.45,
       }}>
         {title}
       </h3>
@@ -436,9 +436,9 @@ function AuthorBlock({ name, role, children }: { name: string; role: string; chi
   const c = t(theme)
   return (
     <div className="mb-8 last:mb-0">
-      <p style={{ color: c.text, fontWeight: 400, lineHeight: 1.5 }}>
+      <p style={{ color: c.text, fontWeight: 600, lineHeight: 1.5 }}>
         <span dangerouslySetInnerHTML={{ __html: name }} />
-        <span className="ml-2" style={{ color: c.muted3, fontSize: '0.875em' }}>| {role}</span>
+        <span className="ml-2" style={{ color: c.muted1, fontSize: '0.875em' }}>| {role}</span>
       </p>
       <p className="mt-2">{children}</p>
     </div>
@@ -452,16 +452,16 @@ function PremiseBlock({ number, label, oldPremise, newPremise }: {
   const c = t(theme)
   return (
     <div className="my-8 pl-5" style={{ borderLeft: `1px solid ${c.divider}` }}>
-      <p className="mb-3" style={{ color: c.text, fontWeight: 400, lineHeight: 1.4 }}>
-        <span className="mr-2" style={{ color: c.muted3 }}>{number}.</span>
+      <p className="mb-3" style={{ color: c.text, fontWeight: 600, lineHeight: 1.4 }}>
+        <span className="mr-2" style={{ color: c.muted1 }}>{number}.</span>
         {label}
       </p>
-      <p className="mb-2" style={{ color: c.muted3, fontSize: '0.9em' }}>
-        <span className="uppercase" style={{ color: c.muted4, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 400 }}>The Old Premise: </span>
+      <p className="mb-2" style={{ color: c.muted2, fontSize: '0.9em' }}>
+        <span className="uppercase" style={{ color: c.muted3, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 700 }}>The Old Premise: </span>
         <span dangerouslySetInnerHTML={{ __html: oldPremise }} />
       </p>
       <p style={{ color: c.muted1 }}>
-        <span className="uppercase" style={{ color: c.muted2, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 400 }}>The Upstream Premise: </span>
+        <span className="uppercase" style={{ color: c.muted1, fontSize: '0.625rem', letterSpacing: '0.12em', fontWeight: 700 }}>The Upstream Premise: </span>
         <span dangerouslySetInnerHTML={{ __html: newPremise }} />
       </p>
     </div>
